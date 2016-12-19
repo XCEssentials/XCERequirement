@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A7736C7001860CF985B78FF4"
+               BuildableName = "MKHRequirementTst.xctest"
+               BlueprintName = "MKHRequirementTst"
+               ReferencedContainer = "container:MKHRequirement.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "19086753823F1DB80E11A7E4"
+            BuildableName = "MKHRequirement.framework"
+            BlueprintName = "MKHRequirement"
+            ReferencedContainer = "container:MKHRequirement.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
