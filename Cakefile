@@ -2,7 +2,7 @@
 # http://www.rubydoc.info/github/jcampbell05/xcake/master/file/docs/Cakefile.md
 
 iOSdeploymentTarget = "8.0"
-currentSwiftVersion = "3.0.1"
+currentSwiftVersion = "3.0"
 companyIdentifier = "khatskevich.maxim"
 developmentTeamId = "UJA88X59XP"
 testSuffix = "Tst"
