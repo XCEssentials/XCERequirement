@@ -1,6 +1,6 @@
 //
-//  MKHRequirementTests.swift
-//  MKHRequirementTests
+//  Main.swift
+//  MKHRequirementTst
 //
 //  Created by Maxim Khatskevich on 12/19/16.
 //  Copyright © 2016 Maxim Khatskevich. All rights reserved.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import MKHRequirement
 
-class MKHRequirementTests: XCTestCase {
+class Main: XCTestCase {
     
     override func setUp() {
         super.setUp()
