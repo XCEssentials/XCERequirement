@@ -15,7 +15,7 @@ import MKHRequirement
 
 class Main: XCTestCase
 {
-    let r = Requirement<Int>("Non-zero") { $0 != 0 }
+    let r = Require<Int>("Non-zero") { $0 != 0 }
     
     //===
     
