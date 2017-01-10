@@ -11,30 +11,42 @@ import Foundation
 //===
 
 public
+typealias RequirementBody<Input> = (_ input: Input) -> Bool
+
+//===
+
+public
 struct Requirement<Input>
 {
     public
     let title: String
     
-    public
-    let check: Check<Input>
+    let body: RequirementBody<Input>
     
     //===
     
     public
-    init(_ title: String, _ check: @escaping Check<Input>)
+    init(_ title: String, _ body: @escaping RequirementBody<Input>)
     {
         self.title = title
-        self.check = check
+        self.body = body
     }
-}
-
-//=== MARK: Compute properties (internal)
-
-extension Requirement
-{
-    var errorMessage: String
+    
+    //===
+    
+    public
+    func isSatisfied(with input: Input) -> Bool
     {
-        return "Requirement [ " + title + " ] is not fulfilled."
+        return body(input)
+    }
+    
+    public
+    func check(with input: Input) throws
+    {
+        if
+            !body(input)
+        {
+            throw RequirementNotSatisfied(title, input: input)
+        }
     }
 }
