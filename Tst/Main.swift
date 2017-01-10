@@ -21,7 +21,8 @@ class Main: XCTestCase
     
     func testBasic()
     {
-        if r.check(14)
+        if
+            r.isSatisfied(with: 14)
         {
             print("\(r.title) -> YES")
         }
@@ -36,8 +37,8 @@ class Main: XCTestCase
     {
         do
         {
-            try r.verify(0)
-            XCTFail()
+            try r.check(with: 0)
+            XCTFail() // should never get to this point
         }
         catch
         {

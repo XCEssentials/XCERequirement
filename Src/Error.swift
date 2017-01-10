@@ -11,30 +11,29 @@ import Foundation
 //===
 
 public
-struct RequirementNotFulfilled: Error
+struct RequirementNotSatisfied: Error
 {
     public
-    let message: String
+    let requirement: String
+    
+    public
+    let input: Any
     
     //===
     
-    init(_ message: String)
+    init(_ requirement: String, input: Any)
     {
-        self.message = message
+        self.requirement = requirement
+        self.input = input
     }
-}
-
-//===
-
-public
-extension Requirement
-{
-    func verify(_ input: Input) throws
+    
+    //===
+    
+    public
+    var localizedDescription: String
     {
-        if
-            !check(input)
-        {
-            throw RequirementNotFulfilled(errorMessage)
-        }
+        return
+            "Requirement [ " + requirement +
+            " ] is not satisfied with input <\(input)>."
     }
 }
