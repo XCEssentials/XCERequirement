@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
 
   s.name                      = 'MKHRequirement'
-  s.version                   = '1.0.1'
-  s.summary                   = 'Describe requirements in a declarative, human-friendly format.'
+  s.version                   = '1.1.0'
+  s.summary                   = 'Describe requirements in a declarative, easy-readable format.'
   s.homepage                  = 'https://github.com/maximkhatskevich/#{s.name}'
   s.license                   = { :type => 'MIT', :file => 'LICENSE' }
   s.author                    = { 'Maxim Khatskevich' => 'maxim@khatskevi.ch' }
