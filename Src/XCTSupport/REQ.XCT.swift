@@ -12,12 +12,15 @@ import XCTest
 //===
 
 public
-enum RXCT {}
+extension REQ
+{
+    enum XCT {}
+}
 
 //===
 
 public
-extension RXCT
+extension REQ.XCT
 {
     static
     func value<Output>(
@@ -25,16 +28,34 @@ extension RXCT
         file: StaticString = #file,
         line: UInt = #line,
         _ body: () -> Output?
-        ) throws -> Output
+        ) -> Output?
     {
         do
         {
             return try REQ.value(description, body)
         }
         catch
+            let error as VerificationFailed
         {
-            XCTFail(error.localizedDescription, file: file, line: line)
-            throw error
+            XCTFail(
+                "[\(error.description)]",
+                file: file,
+                line: line)
+            
+            //===
+            
+            return nil
+        }
+        catch
+        {
+            XCTFail(
+                error.localizedDescription,
+                file: file,
+                line: line)
+            
+            //===
+            
+            return nil
         }
     }
     
@@ -44,16 +65,26 @@ extension RXCT
         file: StaticString = #file,
         line: UInt = #line,
         _ body: () -> Bool
-        ) throws
+        )
     {
         do
         {
             try REQ.isTrue(description, body)
         }
         catch
+            let error as VerificationFailed
         {
-            XCTFail(error.localizedDescription, file: file, line: line)
-            throw error
+            XCTFail(
+                "[\(error.description)]",
+                file: file,
+                line: line)
+        }
+        catch
+        {
+            XCTFail(
+                error.localizedDescription,
+                file: file,
+                line: line)
         }
     }
     
@@ -63,16 +94,26 @@ extension RXCT
         file: StaticString = #file,
         line: UInt = #line,
         _ body: () -> Any?
-        ) throws
+        )
     {
         do
         {
             try REQ.isNil(description, body)
         }
         catch
+            let error as VerificationFailed
         {
-            XCTFail(error.localizedDescription, file: file, line: line)
-            throw error
+            XCTFail(
+                "[\(error.description)]",
+                file: file,
+                line: line)
+        }
+        catch
+        {
+            XCTFail(
+                error.localizedDescription,
+                file: file,
+                line: line)
         }
     }
     
@@ -82,16 +123,26 @@ extension RXCT
         file: StaticString = #file,
         line: UInt = #line,
         _ body: () -> Any?
-        ) throws
+        )
     {
         do
         {
             try REQ.isNotNil(description, body)
         }
         catch
+            let error as VerificationFailed
         {
-            XCTFail(error.localizedDescription, file: file, line: line)
-            throw error
+            XCTFail(
+                "[\(error.description)]",
+                file: file,
+                line: line)
+        }
+        catch
+        {
+            XCTFail(
+                error.localizedDescription,
+                file: file,
+                line: line)
         }
     }
 }
