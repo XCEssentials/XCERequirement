@@ -14,14 +14,15 @@
 		9411D89A1E72ED2500E55024 /* Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9411D8961E72ED2500E55024 /* Extra.swift */; };
 		9411D89B1E72ED2500E55024 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9411D8971E72ED2500E55024 /* Requirement.swift */; };
 		9411D89C1E72ED2500E55024 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9411D8981E72ED2500E55024 /* Typealiases.swift */; };
-		9411D89F1E72ED3000E55024 /* REQ.XCT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9411D89E1E72ED3000E55024 /* REQ.XCT.swift */; };
+		9411D8A01E732D1D00E55024 /* REQ.XCT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9411D89E1E72ED3000E55024 /* REQ.XCT.swift */; };
+		9411D8A11E732FE200E55024 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9411D88D1E72E3F400E55024 /* XCTest.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B309F365BCEE5B1F8C85F1CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB495621A307250175A8D8EE /* Foundation.framework */; };
 		E2D48A628ADE8D635F8B79C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0448DDC2F8A107A1ED2A9F6 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4383141F1A976E69A4E3AA99 /* Main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		833FD43CC4E245B33FB7C641 /* MKHRequirement. */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = MKHRequirement.; path = MKHRequirement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		833FD43CC4E245B33FB7C641 /* MKHRequirement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MKHRequirement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9411D88D1E72E3F400E55024 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		9411D8951E72ED2500E55024 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		9411D8961E72ED2500E55024 /* Extra.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extra.swift; sourceTree = "<group>"; };
@@ -48,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9411D8A11E732FE200E55024 /* XCTest.framework in Frameworks */,
 				0EF3868C7DE938514BA31E54 /* Foundation.framework in Frameworks */,
 				649CDD44F894BDA2DF896A0F /* UIKit.framework in Frameworks */,
 			);
@@ -60,7 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				A6B31BAD9EEB75AD8507782C /* MKHRequirementTst.xctest */,
-				833FD43CC4E245B33FB7C641 /* MKHRequirement. */,
+				833FD43CC4E245B33FB7C641 /* MKHRequirement.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,7 +156,7 @@
 			);
 			name = MKHRequirement;
 			productName = MKHRequirement;
-			productReference = 833FD43CC4E245B33FB7C641 /* MKHRequirement. */;
+			productReference = 833FD43CC4E245B33FB7C641 /* MKHRequirement.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A7736C7001860CF985B78FF4 /* MKHRequirementTst */ = {
@@ -216,7 +218,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C9957A3304BF9E054F8E200 /* Main.swift in Sources */,
-				9411D89F1E72ED3000E55024 /* REQ.XCT.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +227,7 @@
 			files = (
 				9411D89C1E72ED2500E55024 /* Typealiases.swift in Sources */,
 				9411D89A1E72ED2500E55024 /* Extra.swift in Sources */,
+				9411D8A01E732D1D00E55024 /* REQ.XCT.swift in Sources */,
 				9411D89B1E72ED2500E55024 /* Requirement.swift in Sources */,
 				9411D8991E72ED2500E55024 /* Errors.swift in Sources */,
 			);
@@ -246,12 +248,21 @@
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Info/MKHRequirement.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					XCTest,
+					"-weak-lswiftXCTest",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = khatskevich.maxim.MKHRequirement;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -326,12 +337,21 @@
 				DYLIB_CURRENT_VERSION = 4;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Info/MKHRequirement.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					XCTest,
+					"-weak-lswiftXCTest",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = khatskevich.maxim.MKHRequirement;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

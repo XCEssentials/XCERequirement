@@ -86,7 +86,7 @@ target do |target|
 
     #=== Source Files
 
-    target.include_files = ["Src/Core/**/*.*"]
+    target.include_files = ["Src/**/*.*"]
     target.include_files << "Src-Extra/**/*.*"
 
     #=== Tests
@@ -117,7 +117,6 @@ target do |target|
         testTargetSrcPath = testSuffix + "/**/*.*"
 
         test_target.include_files = [testTargetSrcPath]
-        test_target.include_files << "Src/XCTSupport/**/*.*"
 
     end
 

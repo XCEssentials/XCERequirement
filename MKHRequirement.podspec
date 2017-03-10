@@ -15,13 +15,22 @@ Pod::Spec.new do |s|
   s.default_subspec           = 'Core'
 
   s.subspec 'Core' do |sub|
+
     sub.source_files          = 'Src/Core/**/*.swift'
+    
   end
 
   s.subspec 'XCTSupport' do |sub|
-    sub.framework             = 'XCTest'
+
+    # http://stackoverflow.com/a/35102636
+    sub.weak_framework        = 'XCTest'
     sub.dependency              'MKHRequirement/Core'
     sub.source_files          = 'Src/XCTSupport/**/*.swift'
+    sub.pod_target_xcconfig = {
+      'OTHER_LDFLAGS' => '-weak-lswiftXCTest',
+      'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PLATFORM_DIR)/Developer/Library/Frameworks"',
+    }
+
   end
 
 end
