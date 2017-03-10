@@ -35,8 +35,8 @@ platform :ios do
 
     # ===
 
-    buildNumber = get_build_number(xcodeproj: projFileName)
     versionNumber = get_version_number(xcodeproj: projFileName)
+    buildNumber = get_build_number(xcodeproj: projFileName)
 
     # === Request target version/build number
 
@@ -62,6 +62,18 @@ platform :ios do
 
     commit_version_bump( # it will fail if more than version bump
       message: 'Version Bump to ' + newVersionNumber + ' (' + newBuildNumber + ')'
+    )
+
+    # ===
+
+    version_bump_podspec(
+      path: './' + projName + '.podspec',
+      version_number: newVersionNumber
+    )
+
+    git_commit(
+      path: './' + projName + '.podspec',
+      message: 'Version Bump to ' + newVersionNumber + ' in Podspec file'
     )
 
   end
