@@ -1,5 +1,5 @@
 //
-//  Main.swift
+//  Requirement.swift
 //  MKHRequirement
 //
 //  Created by Maxim Khatskevich on 12/19/16.
@@ -7,11 +7,6 @@
 //
 
 import Foundation
-
-//===
-
-public
-typealias RequirementBody<Input> = (_ input: Input) -> Bool
 
 //===
 
@@ -31,16 +26,29 @@ struct Requirement<Input>
         self.title = title
         self.body = body
     }
-    
-    //===
-    
-    public
+}
+
+//===
+
+public
+extension Requirement
+{
+    init()
+    {
+        self.init("Accept anything") { _ in return true }
+    }
+}
+
+//===
+
+public
+extension Requirement
+{
     func isSatisfied(with input: Input) -> Bool
     {
         return body(input)
     }
     
-    public
     func check(with input: Input) throws
     {
         if
