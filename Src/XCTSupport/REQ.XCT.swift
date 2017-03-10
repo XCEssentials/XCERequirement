@@ -6,7 +6,6 @@
 //  Copyright © 2016 Maxim Khatskevich. All rights reserved.
 //
 
-import MKHRequirement
 import XCTest
 
 //===
@@ -16,6 +15,11 @@ extension REQ
 {
     enum XCT {}
 }
+
+//===
+
+public
+typealias RXCT = REQ.XCT
 
 //===
 
