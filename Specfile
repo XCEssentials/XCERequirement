@@ -1,43 +1,19 @@
-# Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
-
-#=== GLOBAL SETTINGS ===
-
-CompanyIdentifier = 'khatskevich.maxim'
-ProjectTitle = 'MKHRequirement'
-DevelopmentTeamId = 'UJA88X59XP' # 'Maxim Khatskevich'
-
-MainTargetName = 'Fwk'
-
-cfgDebug = 'Debug'
-cfgRelease = 'Release'
-
-#=== SPEC ===
-
 spec('1.2.0') do
 
-  configuration(cfgDebug) do
+  # Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
 
-    type 'debug'
+  #=== GLOBAL SETTINGS ===
 
-    profile 'general:debug'
-    profile 'ios:debug'
+  CompanyIdentifier = 'khatskevich.maxim'
+  ProjectTitle = 'MKHRequirement'
+  DevelopmentTeamId = 'UJA88X59XP' # 'Maxim Khatskevich'
 
-  end # configuration(cfgDebug)
+  cfgDebug = 'Debug'
+  cfgRelease = 'Release'
 
-  #===
+  #=== SHARED SETTINGS - ALL targets, ALL configurations ===
 
-  configuration(cfgRelease) do
-
-    type 'release'
-
-    profile 'general:release'
-    profile 'ios:release'
-
-  end # configuration(cfgRelease)
-
-  #===
-
-  configuration do # ALL targets, ALL configurations
+  def CommonSettings
 
     #--- PROJECT-related settings
 
@@ -53,11 +29,67 @@ spec('1.2.0') do
     override 'SWIFT_VERSION', '3.0'
     override 'VERSIONING_SYSTEM', 'apple-generic'
 
-  end # ALL configurations
+  end # CommonSettings
+
+  #=== SHARED SETTINGS - Fwk target ONLY, ALL configurations ===
+
+  def FwkSettings
+
+    #--- PROJECT-related settings
+
+    override 'PRODUCT_NAME', ProjectTitle # $(TARGET_NAME)
+    
+    #--- OTHER settings
+
+    override 'DEFINES_MODULE', 'YES'
+    override 'SKIP_INSTALL', 'YES'
+
+  end # FwkSettings
+
+  #=== SHARED SETTINGS - Unit tests target ONLY, ALL configurations ===
+
+  def TstFwkSettings
+
+    #--- PROJECT-related settings
+
+    override 'PRODUCT_NAME', ProjectTitle + 'Tst' # $(TARGET_NAME)
+    override 'FRAMEWORK_SEARCH_PATHS', '$(inherited) $(BUILT_PRODUCTS_DIR)'
+    
+    #--- OTHER settings
+
+    # override 'TEST_HOST', '$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest' # ???
+    
+  end # TstFwkSettings
+
+  #=== SPEC ===
+
+  configuration(cfgDebug) do
+
+    type :debug
+
+    profile 'general:debug'
+    profile 'ios:debug'
+
+    CommonSettings
+
+  end # configuration(cfgDebug)
 
   #===
 
-  target(MainTargetName) do
+  configuration(cfgRelease) do
+
+    type :release
+
+    profile 'general:release'
+    profile 'ios:release'
+
+    CommonSettings
+
+  end # configuration(cfgRelease)
+
+  #===
+
+  target('Fwk') do
 
     platform 'ios'
     type ':framework'
@@ -71,32 +103,26 @@ spec('1.2.0') do
 
     #===
 
-    configuration do # ALL configurations
-
-      #--- PROJECT-related settings
-
-      override 'PRODUCT_NAME', ProjectTitle # $(TARGET_NAME)
-      
-      #--- OTHER settings
-
-      override DEFINES_MODULE: 'YES'
-      override SKIP_INSTALL: 'YES'
-
-    end # ALL configurations
-
-    #===
-
     configuration(cfgDebug) do
 
+      FwkSettings
       override 'SWIFT_OPTIMIZATION_LEVEL', '-Onone'
 
     end # configuration(cfgDebug)
 
     #===
 
+    configuration(cfgRelease) do
+
+      FwkSettings
+
+    end # configuration(cfgRelease)
+
+    #===
+
     # script 'scripts/sample.sh'
 
-  end # target(MainTargetName)
+  end # target('Fwk')
 
   #===
 
@@ -114,26 +140,20 @@ spec('1.2.0') do
 
     #===
 
-    configuration do # ALL configurations
-
-      #--- PROJECT-related settings
-
-      override 'PRODUCT_NAME', ProjectTitle + 'Tst' # $(TARGET_NAME)
-      override 'FRAMEWORK_SEARCH_PATHS', '$(inherited) $(BUILT_PRODUCTS_DIR)'
-      
-      #--- OTHER settings
-
-      # override 'TEST_HOST', '$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest' # ???
-      
-    end # configuration
-
-    #===
-
     configuration(cfgDebug) do
 
+      TstFwkSettings
       override 'SWIFT_OPTIMIZATION_LEVEL', '-Onone'
 
     end # configuration(cfgDebug)
+
+    #===
+
+    configuration(cfgRelease) do
+
+      TstFwkSettings
+
+    end # configuration(cfgRelease)
 
   end # target('Tst')
 
@@ -147,7 +167,7 @@ spec('1.2.0') do
 
   #===
 
-  variant(ProjectTitle) do # 'Main'
+  variant(ProjectTitle) do
 
     #
 
