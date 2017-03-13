@@ -1,17 +1,25 @@
 ---
 version: 1.2.0 # Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
 
-#=== SHARED SETTINGS
+#=== SHARED SETTINGS =====
 
 # http://stackoverflow.com/a/2063741
 
 _: &CommonSettings
     SWIFT_VERSION: '3.0'
+    SDKROOT: iphoneos
+    TARGETED_DEVICE_FAMILY: '1,2'
+    VERSIONING_SYSTEM: apple-generic
 
-_: &AppCommonSettings
+_: &FwkCommonSettings
     PRODUCT_NAME: '$(TARGET_NAME)'
 
-#=== SPEC
+# _: &TstFwkCommonSettings
+#     PRODUCT_NAME: '$(TARGET_NAME)'
+
+#=== SPEC ================
+
+#=== 
 
 configurations:
 
@@ -25,10 +33,6 @@ configurations:
 
         overrides:
             *CommonSettings
-            # GCC_SYMBOLS_PRIVATE_EXTERN: 'NO'
-            # SDKROOT: iphoneos
-            # TARGETED_DEVICE_FAMILY: '1,2'
-            # VERSIONING_SYSTEM: apple-generic
 
     #---
     
@@ -42,9 +46,6 @@ configurations:
 
         overrides:
             *CommonSettings
-            # SDKROOT: iphoneos
-            # TARGETED_DEVICE_FAMILY: '1,2'
-            # VERSIONING_SYSTEM: apple-generic
 
 # /configurations
 
@@ -65,9 +66,7 @@ targets:
         configurations:
 
             Debug:
-                *AppCommonSettings
-                # PRODUCT_NAME: '$(TARGET_NAME)'
-                # SWIFT_VERSION: '3.0'
+                *FwkCommonSettings
                 # CLANG_ENABLE_MODULES: 'YES'
                 # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
                 # CURRENT_PROJECT_VERSION: '6'
@@ -90,9 +89,7 @@ targets:
                 # VERSION_INFO_PREFIX: ''
 
             Release:
-                *AppCommonSettings
-                # PRODUCT_NAME: '$(TARGET_NAME)'
-                # SWIFT_VERSION: '3.0'
+                *FwkCommonSettings
                 # CLANG_ENABLE_MODULES: 'YES'
                 # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
                 # CURRENT_PROJECT_VERSION: '6'
