@@ -13,7 +13,7 @@ _: &CommonSettings
 
     #--- PROJECT-related settings
 
-    DEVELOPMENT_TEAM: Maxim Khatskevich
+    DEVELOPMENT_TEAM: UJA88X59XP # 'Maxim Khatskevich'
 
     #--- OTHER settings
 
@@ -162,5 +162,5 @@ variants:
         # iOSTest:
         #     configuration:
         #         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_DEV
-        
+
 # /variants
