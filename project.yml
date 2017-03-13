@@ -1,15 +1,19 @@
 ---
 version: 1.2.0 # Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
 
+#=== GLOBAL SETTINGS ===
+
+_: &CompanyIdentifier khatskevich.maxim
+_: &ProjectTitle MKHRequirement
+
 #=== SHARED SETTINGS - ALL targets, ALL configurations =====
 
 _: &CommonSettings
 
     #--- CUSTOM project-related settings
 
-    _COMPANY_IDENTIFIER: khatskevich.maxim
-    _PROJECT_TITLE: MKHRequirement
-    _TESTS_SUFFIX: Tst
+    _COMPANY_IDENTIFIER: *CompanyIdentifier
+    _PROJECT_TITLE: *ProjectTitle
 
     #--- PROJECT-related settings
 
@@ -51,7 +55,7 @@ _: &TstFwkCommonSettings
 
     #--- PROJECT-related settings
 
-    PRODUCT_NAME: $(_PROJECT_TITLE)$(_TESTS_SUFFIX)
+    PRODUCT_NAME: $(_PROJECT_TITLE)Tst
     PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
     INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
 
@@ -116,16 +120,16 @@ targets:
         - sdkroot:Foundation.framework
         - sdkroot:UIKit.framework
 
-    # /MKHRequirement
+    # /Fwk
 
     #---
 
     Tst:
-        
-        sources: Tst
 
         references:
         - Fwk
+        
+        sources: Tst
 
         type: ':bundle.unit-test'
         
@@ -148,6 +152,20 @@ targets:
         - sdkroot:Foundation.framework
         - sdkroot:UIKit.framework
 
-    # /MKHRequirementTst
+    # /Tst
 
 # /targets
+
+#===
+
+variants:
+
+    $base:
+        abstract: YES
+
+    #---
+
+    Main:
+        #
+
+# /variants
