@@ -168,9 +168,11 @@
 					19086753823F1DB80E11A7E4 = {
 						DevelopmentTeam = UJA88X59XP;
 						LastSwiftMigration = 0820;
+						ProvisioningStyle = Automatic;
 					};
 					A7736C7001860CF985B78FF4 = {
 						DevelopmentTeam = UJA88X59XP;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -219,7 +221,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -300,7 +302,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -372,7 +374,7 @@
 		EBBD260D1E2480DA405056C2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = UJA88X59XP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -392,7 +394,7 @@
 		EF52D7007721A824FC6EB4E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = UJA88X59XP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
