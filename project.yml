@@ -121,8 +121,11 @@ targets:
     #---
 
     Tst:
-
+        
         sources: Tst
+
+        references:
+        - Fwk
 
         type: ':bundle.unit-test'
         
