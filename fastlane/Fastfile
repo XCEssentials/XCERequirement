@@ -29,6 +29,13 @@ projFileName = projName + '.xcodeproj'
 
 platform :ios do
 
+  lane :testing_struct do
+
+    sh 'cd ./.. && struct --generate'
+    recreate_schemes(project: 'project.xcodeproj')
+
+  end
+
   lane :inc_version_and_commit do
 
     ensure_git_status_clean

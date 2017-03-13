@@ -29,6 +29,11 @@ xcode-select --install
 </table>
 # Available Actions
 ## iOS
+### ios testing_struct
+```
+fastlane ios testing_struct
+```
+
 ### ios inc_version_and_commit
 ```
 fastlane ios inc_version_and_commit
