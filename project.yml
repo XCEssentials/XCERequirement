@@ -1,25 +1,63 @@
 ---
 version: 1.2.0 # Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
 
-#=== SHARED SETTINGS =====
-
-# http://stackoverflow.com/a/2063741
+#=== SHARED SETTINGS - ALL targets, ALL configurations =====
 
 _: &CommonSettings
+
+    #--- CUSTOM project-related settings
+
+    _COMPANY_IDENTIFIER: khatskevich.maxim
+    _PROJECT_TITLE: MKHRequirement
+    _TESTS_SUFFIX: Tst
+
+    #--- PROJECT-related settings
+
+    DEVELOPMENT_TEAM: Maxim Khatskevich
+
+    #--- OTHER settings
+
     SWIFT_VERSION: '3.0'
     SDKROOT: iphoneos
     TARGETED_DEVICE_FAMILY: '1,2'
     VERSIONING_SYSTEM: apple-generic
 
-_: &FwkCommonSettings
-    PRODUCT_NAME: '$(TARGET_NAME)'
+# /CommonSettings
 
-# _: &TstFwkCommonSettings
-#     PRODUCT_NAME: '$(TARGET_NAME)'
+#=== SHARED SETTINGS - framework target ONLY, ALL configurations =====
+
+_: &FwkCommonSettings
+
+    #--- PROJECT-related settings
+
+    PRODUCT_NAME: $(_PROJECT_TITLE)
+    PRODUCT_BUNDLE_IDENTIFIER:  $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
+    INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
+
+    #--- OTHER settings
+
+    DEFINES_MODULE: 'YES'
+    SKIP_INSTALL: 'YES'
+
+    # DYLIB_COMPATIBILITY_VERSION: '1'
+    # DYLIB_CURRENT_VERSION: '6'
+    # DYLIB_INSTALL_NAME_BASE: '@rpath'
+
+# /FwkCommonSettings
+
+#=== SHARED SETTINGS - framework unit tests target ONLY, ALL configurations =====
+
+_: &TstFwkCommonSettings
+
+    #--- PROJECT-related settings
+
+    PRODUCT_NAME: $(_PROJECT_TITLE)$(_TESTS_SUFFIX)
+    PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
+    INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
+
+# /TstFwkCommonSettings
 
 #=== SPEC ================
-
-#=== 
 
 configurations:
 
@@ -66,49 +104,11 @@ targets:
         configurations:
 
             Debug:
-                *FwkCommonSettings
-                # CLANG_ENABLE_MODULES: 'YES'
-                # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
-                # CURRENT_PROJECT_VERSION: '6'
-                # DEBUG_INFORMATION_FORMAT: dwarf
-                # DEFINES_MODULE: 'YES'
-                # DEVELOPMENT_TEAM: UJA88X59XP
-                # DYLIB_COMPATIBILITY_VERSION: '1'
-                # DYLIB_CURRENT_VERSION: '6'
-                # DYLIB_INSTALL_NAME_BASE: '@rpath'
-                # ENABLE_STRICT_OBJC_MSGSEND: 'YES'
-                # GCC_NO_COMMON_BLOCKS: 'YES'
-                # INFOPLIST_FILE: Info/MKHRequirement.plist
-                # INSTALL_PATH: '$(LOCAL_LIBRARY_DIR)/Frameworks'
-                # MTL_ENABLE_DEBUG_INFO: 'YES'
-                # PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
-                # SKIP_INSTALL: 'YES'
-                # SWIFT_OPTIMIZATION_LEVEL: '-Onone'
-                # TARGETED_DEVICE_FAMILY: '1,2'
-                # VERSIONING_SYSTEM: apple-generic
-                # VERSION_INFO_PREFIX: ''
+                <<: *FwkCommonSettings
+                SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
             Release:
                 *FwkCommonSettings
-                # CLANG_ENABLE_MODULES: 'YES'
-                # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
-                # CURRENT_PROJECT_VERSION: '6'
-                # DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
-                # DEFINES_MODULE: 'YES'
-                # DEVELOPMENT_TEAM: UJA88X59XP
-                # DYLIB_COMPATIBILITY_VERSION: '1'
-                # DYLIB_CURRENT_VERSION: '6'
-                # DYLIB_INSTALL_NAME_BASE: '@rpath'
-                # ENABLE_STRICT_OBJC_MSGSEND: 'YES'
-                # GCC_NO_COMMON_BLOCKS: 'YES'
-                # INFOPLIST_FILE: Info/MKHRequirement.plist
-                # INSTALL_PATH: '$(LOCAL_LIBRARY_DIR)/Frameworks'
-                # MTL_ENABLE_DEBUG_INFO: 'NO'
-                # PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
-                # SKIP_INSTALL: 'YES'
-                # TARGETED_DEVICE_FAMILY: '1,2'
-                # VERSIONING_SYSTEM: apple-generic
-                # VERSION_INFO_PREFIX: ''
 
         # /configurations
 
@@ -130,28 +130,14 @@ targets:
         - platform:ios
         - bundle.unit-test
         
-        # configurations:
+        configurations:
 
-            # Debug:
-                # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
-                # DEBUG_INFORMATION_FORMAT: dwarf
-                # DEVELOPMENT_TEAM: UJA88X59XP
-                # ENABLE_STRICT_OBJC_MSGSEND: 'YES'
-                # GCC_NO_COMMON_BLOCKS: 'YES'
-                # INFOPLIST_FILE: Info/MKHRequirementTst.plist
-                # MTL_ENABLE_DEBUG_INFO: 'YES'
-                # PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirementTst
-                # SWIFT_OPTIMIZATION_LEVEL: '-Onone'
+            Debug:
+                <<: *TstFwkCommonSettings
+                SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
-            # Release:
-                # CODE_SIGN_IDENTITY[sdk=iphoneos*]: iPhone Developer
-                # DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
-                # DEVELOPMENT_TEAM: UJA88X59XP
-                # ENABLE_STRICT_OBJC_MSGSEND: 'YES'
-                # GCC_NO_COMMON_BLOCKS: 'YES'
-                # INFOPLIST_FILE: Info/MKHRequirementTst.plist
-                # MTL_ENABLE_DEBUG_INFO: 'NO'
-                # PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirementTst
+            Release:
+                *TstFwkCommonSettings
         
         # /configurations
 
@@ -176,3 +162,5 @@ variants:
         # iOSTest:
         #     configuration:
         #         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_DEV
+        
+# /variants
