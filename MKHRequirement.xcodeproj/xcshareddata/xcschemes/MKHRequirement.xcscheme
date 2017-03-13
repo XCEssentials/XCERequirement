@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "19086753823F1DB80E11A7E4"
+               BlueprintIdentifier = "E878A956597C2D93291760F6"
                BuildableName = "MKHRequirement.framework"
                BlueprintName = "MKHRequirement"
                ReferencedContainer = "container:MKHRequirement.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A7736C7001860CF985B78FF4"
+               BlueprintIdentifier = "A11F9F3F6B1A8E7550643753"
                BuildableName = "MKHRequirementTst.xctest"
                BlueprintName = "MKHRequirementTst"
                ReferencedContainer = "container:MKHRequirement.xcodeproj">
@@ -42,7 +42,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "19086753823F1DB80E11A7E4"
+            BlueprintIdentifier = "E878A956597C2D93291760F6"
             BuildableName = "MKHRequirement.framework"
             BlueprintName = "MKHRequirement"
             ReferencedContainer = "container:MKHRequirement.xcodeproj">
@@ -64,7 +64,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "19086753823F1DB80E11A7E4"
+            BlueprintIdentifier = "E878A956597C2D93291760F6"
             BuildableName = "MKHRequirement.framework"
             BlueprintName = "MKHRequirement"
             ReferencedContainer = "container:MKHRequirement.xcodeproj">
@@ -82,7 +82,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "19086753823F1DB80E11A7E4"
+            BlueprintIdentifier = "E878A956597C2D93291760F6"
             BuildableName = "MKHRequirement.framework"
             BlueprintName = "MKHRequirement"
             ReferencedContainer = "container:MKHRequirement.xcodeproj">
