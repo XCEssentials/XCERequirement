@@ -1,0 +1,156 @@
+# Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
+
+#=== GLOBAL SETTINGS ===
+
+CompanyIdentifier = 'khatskevich.maxim'
+ProjectTitle = 'MKHRequirement'
+DevelopmentTeamId = 'UJA88X59XP' # 'Maxim Khatskevich'
+
+MainTargetName = 'Fwk'
+
+cfgDebug = 'Debug'
+cfgRelease = 'Release'
+
+#=== SPEC ===
+
+spec('1.2.0') do
+
+  configuration(cfgDebug) do
+
+    type 'debug'
+
+    profile 'general:debug'
+    profile 'ios:debug'
+
+  end # configuration(cfgDebug)
+
+  #===
+
+  configuration(cfgRelease) do
+
+    type 'release'
+
+    profile 'general:release'
+    profile 'ios:release'
+
+  end # configuration(cfgRelease)
+
+  #===
+
+  configuration do # ALL targets, ALL configurations
+
+    #--- PROJECT-related settings
+
+    override 'PRODUCT_BUNDLE_IDENTIFIER', CompanyIdentifier + '.$(PRODUCT_NAME)'
+    override 'INFOPLIST_FILE', 'Info/$(PRODUCT_NAME).plist'
+    override 'DEVELOPMENT_TEAM', DevelopmentTeamId
+    override 'IPHONEOS_DEPLOYMENT_TARGET', '8.0'
+
+    #--- OTHER settings
+
+    override 'SDKROOT', 'iphoneos'
+    override 'TARGETED_DEVICE_FAMILY', '1,2'
+    override 'SWIFT_VERSION', '3.0'
+    override 'VERSIONING_SYSTEM', 'apple-generic'
+
+  end # ALL configurations
+
+  #===
+
+  target(MainTargetName) do
+
+    platform 'ios'
+    type ':framework'
+
+    source_dir 'Src'
+
+    profile 'platform:ios'
+    profile 'framework'
+
+    # system_reference 'Foundation.framework'
+
+    #===
+
+    configuration do # ALL configurations
+
+      #--- PROJECT-related settings
+
+      override 'PRODUCT_NAME', ProjectTitle # $(TARGET_NAME)
+      
+      #--- OTHER settings
+
+      override DEFINES_MODULE: 'YES'
+      override SKIP_INSTALL: 'YES'
+
+    end # ALL configurations
+
+    #===
+
+    configuration(cfgDebug) do
+
+      override 'SWIFT_OPTIMIZATION_LEVEL', '-Onone'
+
+    end # configuration(cfgDebug)
+
+    #===
+
+    # script 'scripts/sample.sh'
+
+  end # target(MainTargetName)
+
+  #===
+
+  target('Tst') do
+
+    # platform 'ios' # ???
+    type ':bundle.unit-test'
+
+    target_reference MainTargetName # override 'TEST_HOST'/'TEST_TARGET_NAME'???
+
+    source_dir 'Tst'
+
+    profile 'platform:ios'
+    profile 'bundle.unit-test'
+
+    #===
+
+    configuration do # ALL configurations
+
+      #--- PROJECT-related settings
+
+      override 'PRODUCT_NAME', ProjectTitle + 'Tst' # $(TARGET_NAME)
+      override 'FRAMEWORK_SEARCH_PATHS', '$(inherited) $(BUILT_PRODUCTS_DIR)'
+      
+      #--- OTHER settings
+
+      # override 'TEST_HOST', '$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest' # ???
+      
+    end # configuration
+
+    #===
+
+    configuration(cfgDebug) do
+
+      override 'SWIFT_OPTIMIZATION_LEVEL', '-Onone'
+
+    end # configuration(cfgDebug)
+
+  end # target('Tst')
+
+  #===
+
+  variant('$base') do
+
+    abstract
+
+  end # variant('$base') 
+
+  #===
+
+  variant(ProjectTitle) do # 'Main'
+
+    #
+
+  end # variant(ProjectTitle)
+
+end
