@@ -3,6 +3,7 @@ version: 1.2.0 # Struct spec version https://github.com/lyptt/struct/wiki/Specfi
 
 #=== GLOBAL SETTINGS ===
 
+_: &iOSdeploymentTarget '8.0'
 _: &CompanyIdentifier khatskevich.maxim
 _: &ProjectTitle MKHRequirement
 _: &DevelopmentTeamId UJA88X59XP # 'Maxim Khatskevich'
@@ -24,7 +25,7 @@ _: &CommonSettings
     PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
     INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
     DEVELOPMENT_TEAM: *DevelopmentTeamId
-    # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
+    # IPHONEOS_DEPLOYMENT_TARGET: iOSdeploymentTarget
 
     #--- OTHER settings
 
