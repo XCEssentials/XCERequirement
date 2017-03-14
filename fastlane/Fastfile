@@ -23,18 +23,11 @@ default_platform :ios
 #===
 
 projName = 'MKHRequirement'
-projFileName = projName + '.xcodeproj'
+projFileName = 'main' + '.xcodeproj'
 
 #===
 
 platform :ios do
-
-  lane :testing_struct do
-
-    sh 'cd ./.. && struct --generate'
-    recreate_schemes(project: 'project.xcodeproj')
-
-  end
 
   lane :inc_version_and_commit do
 
@@ -103,7 +96,7 @@ platform :ios do
     # default initial location for any command
     # is inside 'Fastlane' folder
 
-    sh 'cd ./.. && xcake make'
+    sh 'cd ./.. && struct -g'
 
     # === Set proper current version and build numbers
 
@@ -128,7 +121,7 @@ platform :ios do
     # default initial location for any command
     # is inside 'Fastlane' folder
 
-    sh 'cd ./.. && xcake make'
+    sh 'cd ./.. && struct -g'
 
     # === Set proper build number (proper version number is stored in the Info file)
 
