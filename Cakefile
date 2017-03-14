@@ -100,29 +100,29 @@ target do |t|
 
     #=== Tests
     
-    # unit_tests_for target do |ut|
+    unit_tests_for target do |ut|
         
-    #     ut.name = testSuffix
+        ut.name = testSuffix
 
-    #     # ut.deployment_target = iOSdeploymentTarget
+        # ut.deployment_target = iOSdeploymentTarget
 
-    #     ut.all_configurations.each do |c|
+        ut.all_configurations.each do |c|
 
-    #         c.settings['PRODUCT_BUNDLE_IDENTIFIER'] = companyIdentifier + '.' + repoName + '.' + testSuffix
-    #         c.settings['INFOPLIST_FILE'] = 'Info/' + testSuffix + '.plist'
-    #         c.settings['FRAMEWORK_SEARCH_PATHS'] = '$(inherited) $(BUILT_PRODUCTS_DIR)'
-    #         # c.settings['LD_RUNPATH_SEARCH_PATHS'] = '$(inherited) @executable_path/Frameworks @loader_path/Frameworks'
+            c.settings['PRODUCT_BUNDLE_IDENTIFIER'] = companyIdentifier + '.' + repoName + '.' + testSuffix
+            c.settings['INFOPLIST_FILE'] = 'Info/' + testSuffix + '.plist'
+            c.settings['FRAMEWORK_SEARCH_PATHS'] = '$(inherited) $(BUILT_PRODUCTS_DIR)'
+            # c.settings['LD_RUNPATH_SEARCH_PATHS'] = '$(inherited) @executable_path/Frameworks @loader_path/Frameworks'
             
-    #         # c.settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = ''
+            # c.settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = ''
 
-    #     end
+        end
 
-    #     #=== Source Files
+        #=== Source Files
 
-    #     testTargetSrcPath = testSuffix + '/**/*.*'
+        testTargetSrcPath = testSuffix + '/**/*.*'
 
-    #     ut.include_files = [testTargetSrcPath]
+        ut.include_files = [testTargetSrcPath]
 
-    # end
+    end
 
 end
