@@ -1,0 +1,179 @@
+---
+version: 1.2.0 # Struct spec version https://github.com/lyptt/struct/wiki/Specfile-format:-v1.2.0
+
+#=== GLOBAL SETTINGS ===
+
+_: &CompanyIdentifier khatskevich.maxim
+_: &ProjectTitle MKHRequirement
+_: &DevelopmentTeamId UJA88X59XP # 'Maxim Khatskevich'
+
+_: &cfgDebug Debug
+_: &cfgRelease Release
+
+#=== SHARED SETTINGS - ALL targets, ALL configurations =====
+
+_: &CommonSettings
+
+    #--- CUSTOM project-related settings
+
+    _COMPANY_IDENTIFIER: *CompanyIdentifier
+    _PROJECT_TITLE: *ProjectTitle
+
+    #--- PROJECT-related settings
+
+    PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
+    INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
+    DEVELOPMENT_TEAM: *DevelopmentTeamId
+    IPHONEOS_DEPLOYMENT_TARGET: '8.0'
+
+    #--- OTHER settings
+
+    SWIFT_VERSION: '3.0'
+    SDKROOT: iphoneos
+    TARGETED_DEVICE_FAMILY: '1,2'
+    VERSIONING_SYSTEM: apple-generic
+
+# /CommonSettings
+
+#=== SHARED SETTINGS - framework target ONLY, ALL configurations =====
+
+_: &FwkCommonSettings
+
+    #--- PROJECT-related settings
+
+    PRODUCT_NAME: $(_PROJECT_TITLE)
+
+    #--- OTHER settings
+
+    DEFINES_MODULE: 'YES'
+    SKIP_INSTALL: 'YES'
+
+    # DYLIB_COMPATIBILITY_VERSION: '1'
+    # DYLIB_CURRENT_VERSION: '6'
+    # DYLIB_INSTALL_NAME_BASE: '@rpath'
+
+# /FwkCommonSettings
+
+#=== SHARED SETTINGS - framework unit tests target ONLY, ALL configurations =====
+
+_: &TstFwkCommonSettings
+
+    #--- PROJECT-related settings
+
+    PRODUCT_NAME: $(_PROJECT_TITLE)Tst
+    FRAMEWORK_SEARCH_PATHS: $(inherited) $(BUILT_PRODUCTS_DIR)
+
+# /TstFwkCommonSettings
+
+#=== SPEC ================
+
+configurations:
+
+    *cfgDebug:
+
+        type: debug
+
+        profiles:
+        - general:debug
+        - ios:debug
+
+        overrides:
+            *CommonSettings
+
+    #---
+    
+    *cfgRelease:
+
+        type: release
+
+        profiles:
+        - general:release
+        - ios:release
+
+        overrides:
+            *CommonSettings
+
+# /configurations
+
+#===
+
+targets:
+
+    Fwk:
+
+        platform: ios
+
+        type: ':framework'
+
+        sources: Src
+
+        profiles:
+        - platform:ios
+        - framework
+
+        configurations:
+
+            *cfgDebug:
+                <<: *FwkCommonSettings
+                SWIFT_OPTIMIZATION_LEVEL: '-Onone'
+
+            *cfgRelease:
+                *FwkCommonSettings
+
+        # /configurations
+
+        references:
+        - sdkroot:Foundation.framework
+        - sdkroot:UIKit.framework
+
+    # /Fwk
+
+    #---
+
+    Tst:
+
+        platform: ios
+        
+        type: ':bundle.unit-test'
+        
+        references:
+        - Fwk
+        
+        sources: Tst
+
+        profiles:
+        - platform:ios
+        - bundle.unit-test
+        
+        configurations:
+
+            *cfgDebug:
+                <<: *TstFwkCommonSettings
+                SWIFT_OPTIMIZATION_LEVEL: '-Onone'
+
+            *cfgRelease:
+                *TstFwkCommonSettings
+        
+        # /configurations
+
+        references:
+        - sdkroot:Foundation.framework
+        - sdkroot:UIKit.framework
+
+    # /Tst
+
+# /targets
+
+#===
+
+variants:
+
+    $base:
+        abstract: YES
+
+    #---
+
+    *ProjectTitle: # Main
+        #
+
+# /variants
