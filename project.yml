@@ -25,7 +25,6 @@ _: &CommonSettings
     PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
     INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
     DEVELOPMENT_TEAM: *DevelopmentTeamId
-    # IPHONEOS_DEPLOYMENT_TARGET: iOSdeploymentTarget
 
     #--- OTHER settings
 
@@ -79,7 +78,8 @@ configurations:
         - ios:debug
 
         overrides:
-            *CommonSettings
+            <<: *CommonSettings
+            IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
 
     #---
     
@@ -92,7 +92,8 @@ configurations:
         - ios:release
 
         overrides:
-            *CommonSettings
+            <<: *CommonSettings
+            IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
 
 # /configurations
 
@@ -119,10 +120,12 @@ targets:
 
             *cfgDebug:
                 <<: *FwkCommonSettings
+                IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
                 SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
             *cfgRelease:
-                *FwkCommonSettings
+                <<: *FwkCommonSettings
+                IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
 
         # /configurations
 
@@ -150,10 +153,12 @@ targets:
 
             *cfgDebug:
                 <<: *TstFwkCommonSettings
+                IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
                 SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
             *cfgRelease:
-                *TstFwkCommonSettings
+                <<: *TstFwkCommonSettings
+                IPHONEOS_DEPLOYMENT_TARGET: *iOSdeploymentTarget
         
         # /configurations
 
