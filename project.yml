@@ -78,7 +78,7 @@ configurations:
         - ios:debug
 
         overrides:
-            <<: *CommonSettings
+            *CommonSettings
 
     #---
     
@@ -91,7 +91,7 @@ configurations:
         - ios:release
 
         overrides:
-            <<: *CommonSettings
+            *CommonSettings
 
 # /configurations
 
@@ -118,12 +118,10 @@ targets:
 
             *cfgDebug:
                 <<: *FwkCommonSettings
-                # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
                 SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
             *cfgRelease:
                 *FwkCommonSettings
-                # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
 
         # /configurations
 
