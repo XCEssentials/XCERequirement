@@ -78,7 +78,7 @@ configurations:
         - ios:debug
 
         overrides:
-            *CommonSettings
+            <<: *CommonSettings
 
     #---
     
@@ -91,7 +91,7 @@ configurations:
         - ios:release
 
         overrides:
-            *CommonSettings
+            <<: *CommonSettings
 
 # /configurations
 
@@ -105,6 +105,9 @@ targets:
 
         type: ':framework'
 
+        references:
+        - sdkroot:Foundation.framework
+
         sources: Src
 
         profiles:
@@ -115,17 +118,16 @@ targets:
 
             *cfgDebug:
                 <<: *FwkCommonSettings
+                # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
                 SWIFT_OPTIMIZATION_LEVEL: '-Onone'
 
             *cfgRelease:
                 *FwkCommonSettings
+                # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
 
         # /configurations
 
-        references:
-        - sdkroot:Foundation.framework
-
-    # /ProjectTitle
+    # /*ProjectTitle
 
     #---
 
@@ -136,6 +138,7 @@ targets:
         type: ':bundle.unit-test'
         
         references:
+        - sdkroot:Foundation.framework
         - *ProjectTitle
         
         sources: Tst
@@ -154,9 +157,6 @@ targets:
                 *TstFwkCommonSettings
         
         # /configurations
-
-        references:
-        - sdkroot:Foundation.framework
 
     # /Tests
 
