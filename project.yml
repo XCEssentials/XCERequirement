@@ -24,7 +24,7 @@ _: &CommonSettings
     PRODUCT_BUNDLE_IDENTIFIER: $(_COMPANY_IDENTIFIER).$(PRODUCT_NAME)
     INFOPLIST_FILE: Info/$(PRODUCT_NAME).plist
     DEVELOPMENT_TEAM: *DevelopmentTeamId
-    IPHONEOS_DEPLOYMENT_TARGET: '8.0'
+    # IPHONEOS_DEPLOYMENT_TARGET: '8.0'
 
     #--- OTHER settings
 
@@ -99,7 +99,7 @@ configurations:
 
 targets:
 
-    Fwk:
+    *ProjectTitle:
 
         platform: ios
 
@@ -124,20 +124,19 @@ targets:
 
         references:
         - sdkroot:Foundation.framework
-        - sdkroot:UIKit.framework
 
-    # /Fwk
+    # /ProjectTitle
 
     #---
 
-    Tst:
+    Tests:
 
         platform: ios
-        
+
         type: ':bundle.unit-test'
         
         references:
-        - Fwk
+        - *ProjectTitle
         
         sources: Tst
 
@@ -158,9 +157,8 @@ targets:
 
         references:
         - sdkroot:Foundation.framework
-        - sdkroot:UIKit.framework
 
-    # /Tst
+    # /Tests
 
 # /targets
 
@@ -173,7 +171,7 @@ variants:
 
     #---
 
-    *ProjectTitle: # Main
+    Main:
         #
 
 # /variants
