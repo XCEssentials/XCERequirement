@@ -36,6 +36,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         DEFINES_MODULE: "NO"
         SKIP_INSTALL: "YES"
+        MTL_ENABLE_DEBUG_INFO: "true"
       Release:
         IPHONEOS_DEPLOYMENT_TARGET: "8.0"
         PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement"
@@ -53,11 +54,14 @@ targets:
     - "Tst"
     configurations:
       Debug:
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
         IPHONEOS_DEPLOYMENT_TARGET: "8.0"
         PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement.Tst"
         INFOPLIST_FILE: "Info/Tst.plist"
         FRAMEWORK_SEARCH_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
+        MTL_ENABLE_DEBUG_INFO: "true"
       Release:
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
         IPHONEOS_DEPLOYMENT_TARGET: "8.0"
         PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement.Tst"
         INFOPLIST_FILE: "Info/Tst.plist"
