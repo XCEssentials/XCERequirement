@@ -21,7 +21,7 @@ configurations:
       VERSIONING_SYSTEM: apple-generic
 targets:
   MKHRequirement:
-    platform: iOS
+    platform: ios
     type: ":framework"
     sources:
     - Src
