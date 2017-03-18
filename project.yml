@@ -1,0 +1,60 @@
+# generated with MKHProjGen
+# https://github.com/maximkhatskevich/MKHProjGen
+version: 1.2.0
+configurations:
+  Debug:
+    type: debug
+    profiles:
+    - general:debug
+    overrides:
+      DEVELOPMENT_TEAM: Maxim Khatskevich
+      SWIFT_VERSION: 3.0
+      VERSIONING_SYSTEM: apple-generic
+      SWIFT_OPTIMIZATION_LEVEL: -Onone
+  Release:
+    type: release
+    profiles:
+    - general:release
+    overrides:
+      DEVELOPMENT_TEAM: Maxim Khatskevich
+      SWIFT_VERSION: 3.0
+      VERSIONING_SYSTEM: apple-generic
+targets:
+  MKHRequirement:
+    platform: iOS
+    type: ":framework"
+    sources:
+    - Src
+    configurations:
+      Debug:
+        type: debug
+        profiles:
+        - platform:ios
+        - framework
+        - ios:debug
+        overrides:
+          IPHONEOS_DEPLOYMENT_TARGET: 8.0
+          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
+          INFOPLIST_FILE: Info/Fwk.plist
+          SDKROOT: iphoneos
+          TARGETED_DEVICE_FAMILY: 1,2
+          DEFINES_MODULE: NO
+          SKIP_INSTALL: YES
+      Release:
+        type: release
+        profiles:
+        - platform:ios
+        - framework
+        - ios:release
+        overrides:
+          IPHONEOS_DEPLOYMENT_TARGET: 8.0
+          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
+          INFOPLIST_FILE: Info/Fwk.plist
+          SDKROOT: iphoneos
+          TARGETED_DEVICE_FAMILY: 1,2
+          DEFINES_MODULE: NO
+          SKIP_INSTALL: YES
+variants:
+  $base:
+    abstract: true
+  Main:
