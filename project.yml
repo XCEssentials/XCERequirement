@@ -1,87 +1,67 @@
 # generated with MKHProjGen
 # https://github.com/maximkhatskevich/MKHProjGen
-version: 1.2.0
+version: 1.2.1
 configurations:
   Debug:
-    type: debug
+    type: "debug"
     profiles:
-    - general:debug
+    - "general:debug"
     overrides:
-      DEVELOPMENT_TEAM: Maxim Khatskevich
-      SWIFT_VERSION: 3.0
-      VERSIONING_SYSTEM: apple-generic
-      SWIFT_OPTIMIZATION_LEVEL: -Onone
+      IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+      DEVELOPMENT_TEAM: "UJA88X59XP"
+      SWIFT_VERSION: "3.0"
+      VERSIONING_SYSTEM: "apple-generic"
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
   Release:
-    type: release
+    type: "release"
     profiles:
-    - general:release
+    - "general:release"
     overrides:
-      DEVELOPMENT_TEAM: Maxim Khatskevich
-      SWIFT_VERSION: 3.0
-      VERSIONING_SYSTEM: apple-generic
+      IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+      DEVELOPMENT_TEAM: "UJA88X59XP"
+      SWIFT_VERSION: "3.0"
+      VERSIONING_SYSTEM: "apple-generic"
 targets:
   MKHRequirement:
-    platform: ios
+    platform: "ios"
     type: ":framework"
     sources:
-    - Src
+    - "Src"
     configurations:
       Debug:
-        type: debug
-        profiles:
-        - platform:ios
-        - framework
-        - ios:debug
-        overrides:
-          IPHONEOS_DEPLOYMENT_TARGET: 8.0
-          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
-          INFOPLIST_FILE: Info/Fwk.plist
-          SDKROOT: iphoneos
-          TARGETED_DEVICE_FAMILY: 1,2
-          DEFINES_MODULE: NO
-          SKIP_INSTALL: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement"
+        INFOPLIST_FILE: "Info/Fwk.plist"
+        SDKROOT: "iphoneos"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        DEFINES_MODULE: "NO"
+        SKIP_INSTALL: "YES"
       Release:
-        type: release
-        profiles:
-        - platform:ios
-        - framework
-        - ios:release
-        overrides:
-          IPHONEOS_DEPLOYMENT_TARGET: 8.0
-          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement
-          INFOPLIST_FILE: Info/Fwk.plist
-          SDKROOT: iphoneos
-          TARGETED_DEVICE_FAMILY: 1,2
-          DEFINES_MODULE: NO
-          SKIP_INSTALL: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement"
+        INFOPLIST_FILE: "Info/Fwk.plist"
+        SDKROOT: "iphoneos"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        DEFINES_MODULE: "NO"
+        SKIP_INSTALL: "YES"
   Tests:
-    platform: ios
+    platform: "ios"
     type: ":bundle.unit-test"
     references:
-    - MKHRequirement
+    - "MKHRequirement"
     sources:
-    - Tst
+    - "Tst"
     configurations:
       Debug:
-        type: debug
-        profiles:
-        - platform:ios
-        - bundle.unit-test
-        - ios:debug
-        overrides:
-          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement.Tst
-          INFOPLIST_FILE: Info/Tst.plist
-          FRAMEWORK_SEARCH_PATHS: $(inherited) $(BUILT_PRODUCTS_DIR)
+        IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement.Tst"
+        INFOPLIST_FILE: "Info/Tst.plist"
+        FRAMEWORK_SEARCH_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
       Release:
-        type: release
-        profiles:
-        - platform:ios
-        - bundle.unit-test
-        - ios:release
-        overrides:
-          PRODUCT_BUNDLE_IDENTIFIER: khatskevich.maxim.MKHRequirement.Tst
-          INFOPLIST_FILE: Info/Tst.plist
-          FRAMEWORK_SEARCH_PATHS: $(inherited) $(BUILT_PRODUCTS_DIR)
+        IPHONEOS_DEPLOYMENT_TARGET: "8.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "khatskevich.maxim.MKHRequirement.Tst"
+        INFOPLIST_FILE: "Info/Tst.plist"
+        FRAMEWORK_SEARCH_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
 variants:
   $base:
     abstract: true
