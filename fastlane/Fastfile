@@ -73,7 +73,7 @@ platform :ios do
 
     else
 
-      newVersionNumber = prompt(text: 'New VERSION number (default: ' + defaultNewVersion + '):')
+      newVersionNumber = prompt(text: 'New VERSION number:')
 
     end
     
@@ -90,7 +90,7 @@ platform :ios do
 
     # ===
 
-    newBuildNumber = get_build_number(xcodeproj: projFileName)
+    newBuildNumber = get_build_number(xcodeproj: projName)
 
     commit_version_bump( # it will fail if more than version bump
       message: 'Version Bump to ' + newVersionNumber + ' (' + newBuildNumber + ')'
