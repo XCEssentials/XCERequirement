@@ -22,8 +22,8 @@ default_platform :ios
 
 #===
 
-projName = 'MKHRequirement'
-projFileName = 'main' + '.xcodeproj'
+repoName = 'MKHRequirement'
+projFileName = 'main.xcodeproj'
 
 #===
 
@@ -63,12 +63,12 @@ platform :ios do
     # ===
 
     version_bump_podspec(
-      path: './' + projName + '.podspec',
+      path: './' + repoName + '.podspec',
       version_number: newVersionNumber
     )
 
     git_commit(
-      path: './' + projName + '.podspec',
+      path: './' + repoName + '.podspec',
       message: 'Version Bump to ' + newVersionNumber + ' in Podspec file'
     )
 
