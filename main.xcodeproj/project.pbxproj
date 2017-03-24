@@ -94,7 +94,7 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = "$local";
+			name = $local;
 			sourceTree = "<group>";
 		};
 		6B64D1B732E9E1809F8E74E2 /* Frameworks */ = {
@@ -121,7 +121,7 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = "$subproj";
+			name = $subproj;
 			sourceTree = "<group>";
 		};
 		AD40D573E55AA384CDEA8F65 /* Products */ = {
@@ -138,7 +138,6 @@
 			children = (
 				133EDB27002CC6802E562E01 /* Main.swift */,
 			);
-			name = Tst;
 			path = Tst;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -150,7 +149,6 @@
 				086E4E6476BB8263E28998A0 /* Requirement.swift */,
 				87A5A5A87D82A10A62CBF8B2 /* Typealiases.swift */,
 			);
-			name = Src;
 			path = Src;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -200,6 +198,14 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
+				TargetAttributes = {
+					E84AB63F012564ACFE8C443A = {
+						DevelopmentTeam = UJA88X59XP;
+					};
+					EF9EC48E5375180AD6F15634 = {
+						DevelopmentTeam = UJA88X59XP;
+					};
+				};
 			};
 			buildConfigurationList = 5116E77411E486557FB8482D /* Build configuration list for PBXProject "main" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -295,6 +301,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = UJA88X59XP;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -319,7 +326,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = NO;
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Info/Fwk.plist;
@@ -362,7 +368,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = NO;
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Info/Fwk.plist;
@@ -405,6 +410,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = UJA88X59XP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

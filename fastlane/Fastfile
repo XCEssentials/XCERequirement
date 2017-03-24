@@ -40,8 +40,9 @@ platform :ios do
     # ===
 
     versionNumber = get_version_number(xcodeproj: projName)
+    puts 'Current VERSION number: ' + versionNumber
 
-    # === Define new version number
+    # === Infer new version number
 
     currentBranch = git_branch
 
@@ -59,16 +60,24 @@ platform :ios do
 
     end
 
-    puts 'Current VERSION number: ' + versionNumber
-    newVersionNumber = prompt(text: 'New VERSION number (default: ' + defaultNewVersion + '):')
+    # === Define new version number
 
-    if newVersionNumber.blank?
+    useInferredNEWVersionNumber = prompt(
+      text: 'Proceed with inferred NEW version number (' + defaultNewVersion + ')?',
+      boolean: true
+    )
+
+    if useInferredNEWVersionNumber
 
       newVersionNumber = defaultNewVersion
 
-    end
+    else
 
-    # === Set new numbers
+      newVersionNumber = prompt(text: 'New VERSION number (default: ' + defaultNewVersion + '):')
+
+    end
+    
+    # === Apply NEW version number and increment build number
 
     increment_version_number(
       xcodeproj: projName,
@@ -80,6 +89,8 @@ platform :ios do
     )
 
     # ===
+
+    newBuildNumber = get_build_number(xcodeproj: projFileName)
 
     commit_version_bump( # it will fail if more than version bump
       message: 'Version Bump to ' + newVersionNumber + ' (' + newBuildNumber + ')'
