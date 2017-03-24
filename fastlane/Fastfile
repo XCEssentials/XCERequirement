@@ -93,6 +93,7 @@ platform :ios do
     newBuildNumber = get_build_number(xcodeproj: projName)
 
     commit_version_bump( # it will fail if more than version bump
+      xcodeproj: projName,
       message: 'Version Bump to ' + newVersionNumber + ' (' + newBuildNumber + ')'
     )
 
