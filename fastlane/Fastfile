@@ -23,7 +23,7 @@ default_platform :ios
 #===
 
 repoName = 'MKHRequirement'
-projFileName = 'main.xcodeproj'
+projName = 'main.xcodeproj'
 
 #===
 
@@ -31,27 +31,52 @@ platform :ios do
 
   lane :inc_version_and_commit do
 
+    # this line is supposed to be used on a release branch only
+
+    # ===
+
     ensure_git_status_clean
 
     # ===
 
-    versionNumber = get_version_number(xcodeproj: projFileName)
-    buildNumber = get_build_number(xcodeproj: projFileName)
+    versionNumber = get_version_number(xcodeproj: projName)
 
-    # === Request target version/build number
+    # === Define new version number
+
+    currentBranch = git_branch
+
+    if currentBranch.include? 'release/'
+
+      # we are on a release branch
+
+      defaultNewVersion = currentBranch.split('/').last
+
+    else
+
+      # we are NOT on a release branch
+
+      defaultNewVersion = ''
+
+    end
 
     puts 'Current VERSION number: ' + versionNumber
-    newVersionNumber = prompt(text: 'New VERSION number:')
+    newVersionNumber = prompt(text: 'New VERSION number (default: ' + defaultNewVersion + '):')
+
+    if newVersionNumber.blank?
+
+      newVersionNumber = defaultNewVersion
+
+    end
 
     # === Set new numbers
 
     increment_version_number(
-      xcodeproj: projFileName,
+      xcodeproj: projName,
       version_number: newVersionNumber
     )
 
     increment_build_number(
-      xcodeproj: projFileName
+      xcodeproj: projName
     )
 
     # ===
@@ -80,12 +105,12 @@ platform :ios do
 
     # === Remember current version and build numbers
 
-    versionNumber = get_version_number(xcodeproj: projFileName)
-    buildNumber = get_build_number(xcodeproj: projFileName)
+    versionNumber = get_version_number(xcodeproj: projName)
+    buildNumber = get_build_number(xcodeproj: projName)
 
     # === Remove completely current project file/folder
     
-    sh 'cd ./.. && rm -r ./' + projFileName
+    sh 'cd ./.. && rm -r ./' + projName
 
     # === Regenerate project
 
@@ -97,12 +122,12 @@ platform :ios do
     # === Set proper current version and build numbers
 
     increment_version_number(
-      xcodeproj: projFileName,
+      xcodeproj: projName,
       version_number: versionNumber
     )
 
     increment_build_number(
-      xcodeproj: projFileName,
+      xcodeproj: projName,
       build_number: buildNumber
     )
 
@@ -124,7 +149,7 @@ platform :ios do
     newBuildNumber = prompt(text: 'Desired BUILD number:')
 
     increment_build_number(
-      xcodeproj: projFileName,
+      xcodeproj: projName,
       build_number: newBuildNumber
     )
 
