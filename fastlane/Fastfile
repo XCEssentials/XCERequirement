@@ -43,9 +43,6 @@ platform :ios do
     puts 'Current VERSION number: ' + versionNumber
     newVersionNumber = prompt(text: 'New VERSION number:')
 
-    puts 'Current BUILD number: ' + buildNumber
-    newBuildNumber = prompt(text: 'New BUILD number:')
-
     # === Set new numbers
 
     increment_version_number(
@@ -54,8 +51,7 @@ platform :ios do
     )
 
     increment_build_number(
-      xcodeproj: projFileName,
-      build_number: newBuildNumber
+      xcodeproj: projFileName
     )
 
     # ===
