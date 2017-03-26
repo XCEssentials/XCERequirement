@@ -23,7 +23,7 @@ default_platform :ios
 #===
 
 repoName = 'MKHRequirement'
-projName = 'main.xcodeproj'
+projName = repoName + '.xcodeproj'
 
 #===
 
@@ -129,7 +129,7 @@ platform :ios do
     # default initial location for any command
     # is inside 'Fastlane' folder
 
-    sh 'cd ./.. && struct -g'
+    sh 'cd ./.. && struct generate'
 
     # === Set proper current version and build numbers
 
@@ -154,7 +154,7 @@ platform :ios do
     # default initial location for any command
     # is inside 'Fastlane' folder
 
-    sh 'cd ./.. && struct -g'
+    sh 'cd ./.. && struct generate'
 
     # === Set proper build number (proper version number is stored in the Info file)
 
