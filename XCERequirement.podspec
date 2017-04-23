@@ -24,6 +24,6 @@ Pod::Spec.new do |s|
 
   s.license                   = { :type => 'MIT', :file => 'LICENSE' }
   s.author                    = { 'Maxim Khatskevich' => 'maxim@khatskevi.ch' }  
-  s.social_media_url          = 'http://www.linkedin.com/in/maximkhatskevich'
+  s.social_media_url          = 'https://www.linkedin.com/in/maximkhatskevich'
   
 end
