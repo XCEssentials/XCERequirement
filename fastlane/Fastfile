@@ -22,8 +22,10 @@ default_platform :ios
 
 #===
 
-repoName = 'MKHRequirement'
-projName = repoName + '.xcodeproj'
+companyPrefix = 'XCE'
+projName = 'Requirement'
+projFileName = projName + '.xcodeproj'
+podspecFilePath = './' + companyPrefix + projName + '.podspec'
 
 #===
 
@@ -31,15 +33,11 @@ platform :ios do
 
   lane :inc_version_and_commit do
 
-    # this line is supposed to be used on a release branch only
-
-    # ===
-
     ensure_git_status_clean
 
     # ===
 
-    versionNumber = get_version_number(xcodeproj: projName)
+    versionNumber = get_version_number(xcodeproj: projFileName)
     puts 'Current VERSION number: ' + versionNumber
 
     # === Infer new version number
@@ -80,32 +78,32 @@ platform :ios do
     # === Apply NEW version number and increment build number
 
     increment_version_number(
-      xcodeproj: projName,
+      xcodeproj: projFileName,
       version_number: newVersionNumber
     )
 
     increment_build_number(
-      xcodeproj: projName
+      xcodeproj: projFileName
     )
 
     # ===
 
-    newBuildNumber = get_build_number(xcodeproj: projName)
+    newBuildNumber = get_build_number(xcodeproj: projFileName)
 
     commit_version_bump( # it will fail if more than version bump
-      xcodeproj: projName,
+      xcodeproj: projFileName,
       message: 'Version Bump to ' + newVersionNumber + ' (' + newBuildNumber + ')'
     )
 
     # ===
 
     version_bump_podspec(
-      path: './' + repoName + '.podspec',
+      path: podspecFilePath,
       version_number: newVersionNumber
     )
 
     git_commit(
-      path: './' + repoName + '.podspec',
+      path: podspecFilePath,
       message: 'Version Bump to ' + newVersionNumber + ' in Podspec file'
     )
 
@@ -117,12 +115,12 @@ platform :ios do
 
     # === Remember current version and build numbers
 
-    versionNumber = get_version_number(xcodeproj: projName)
-    buildNumber = get_build_number(xcodeproj: projName)
+    versionNumber = get_version_number(xcodeproj: projFileName)
+    buildNumber = get_build_number(xcodeproj: projFileName)
 
     # === Remove completely current project file/folder
     
-    sh 'cd ./.. && rm -r ./' + projName
+    sh 'cd ./.. && rm -r ./' + projFileName
 
     # === Regenerate project
 
@@ -134,12 +132,12 @@ platform :ios do
     # === Set proper current version and build numbers
 
     increment_version_number(
-      xcodeproj: projName,
+      xcodeproj: projFileName,
       version_number: versionNumber
     )
 
     increment_build_number(
-      xcodeproj: projName,
+      xcodeproj: projFileName,
       build_number: buildNumber
     )
 
@@ -161,7 +159,7 @@ platform :ios do
     newBuildNumber = prompt(text: 'Desired BUILD number:')
 
     increment_build_number(
-      xcodeproj: projName,
+      xcodeproj: projFileName,
       build_number: newBuildNumber
     )
 
