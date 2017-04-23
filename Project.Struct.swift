@@ -1,13 +1,13 @@
-import MKHProjGen
+import XCEProjectGenerator
 
 //===
 
 let My =
 (
-    repoName: "MKHRequirement",
+    repoName: "Requirement",
     deploymentTarget: "8.0",
-    companyIdentifier: "khatskevich.maxim",
-    developmentTeamId: "UJA88X59XP" // "Maxim Khatskevich"
+    companyIdentifier: "io.XCEssentials",
+    companyPrefix: "XCE"
 )
 
 let BundleId =
@@ -26,8 +26,6 @@ let project = Project(My.repoName) { p in
         
         "IPHONEOS_DEPLOYMENT_TARGET" <<< My.deploymentTarget, // bug wokraround
         
-        "DEVELOPMENT_TEAM" <<< My.developmentTeamId,
-        
         "SWIFT_VERSION" <<< "3.0",
         "VERSIONING_SYSTEM" <<< "apple-generic"
     )
@@ -39,13 +37,15 @@ let project = Project(My.repoName) { p in
     
     //---
     
-    p.target(My.repoName, .iOS, .framework) { t in
+    p.target("Fwk", .iOS, .framework) { t in
         
         t.include("Src")
         
         //---
         
         t.configurations.all.override(
+            
+            "PRODUCT_NAME" <<< "\(My.companyPrefix)\(My.repoName)",
             
             "IPHONEOS_DEPLOYMENT_TARGET" <<< My.deploymentTarget, // bug wokraround
             
