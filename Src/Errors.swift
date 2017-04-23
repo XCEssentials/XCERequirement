@@ -16,7 +16,7 @@ protocol RequirementIssue: Error {}
 //===
 
 public
-struct RequirementNotSatisfied: RequirementIssue
+struct RequirementNotFulfilled: RequirementIssue
 {
     public
     let requirement: String
@@ -39,7 +39,7 @@ struct RequirementNotSatisfied: RequirementIssue
     {
         return
             "requirement [ " + requirement +
-            " ] is not satisfied with input <\(input)>"
+            " ] is not fulfilled with input <\(input)>"
     }
 }
 

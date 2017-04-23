@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1176C0C33D091DC61D024691 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F900D3BC60A9ABD1F0EE4C2 /* Foundation.framework */; };
 		2C54F77E2B7168439BCCBFDD /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DF87E7D10594F7BF241783 /* Typealiases.swift */; };
-		358A1FDE64DC8B2F1DF2A5F1 /* Fwk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E14AFDC2AE6EB419ACB20468 /* Fwk.framework */; };
+		358A1FDE64DC8B2F1DF2A5F1 /* XCERequirement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E14AFDC2AE6EB419ACB20468 /* XCERequirement.framework */; };
 		53CD32EFB6823AD9ADC83170 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA17AB4EF45B6A0EEF0C1D03 /* Main.swift */; };
 		820A670E3AD119536C4B3E02 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA196BCC3D5244C1C56AEE9E /* Requirement.swift */; };
 		857083C9709EFE7A5696545D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F900D3BC60A9ABD1F0EE4C2 /* Foundation.framework */; };
@@ -56,7 +56,7 @@
 		5351A4CD7DB16AD5DCF33007 /* Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		C6FB15FD5A4F71BD3C48083A /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA196BCC3D5244C1C56AEE9E /* Requirement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
-		E14AFDC2AE6EB419ACB20468 /* Fwk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Fwk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E14AFDC2AE6EB419ACB20468 /* XCERequirement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XCERequirement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2DF87E7D10594F7BF241783 /* Typealiases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
 		FA17AB4EF45B6A0EEF0C1D03 /* Main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,7 +67,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				857083C9709EFE7A5696545D /* Foundation.framework in Frameworks */,
-				358A1FDE64DC8B2F1DF2A5F1 /* Fwk.framework in Frameworks */,
+				358A1FDE64DC8B2F1DF2A5F1 /* XCERequirement.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +96,7 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = "$local";
+			name = $local;
 			sourceTree = "<group>";
 		};
 		CCC6CBE57A576F8D25AAA0E9 /* Src */ = {
@@ -107,7 +107,6 @@
 				DA196BCC3D5244C1C56AEE9E /* Requirement.swift */,
 				F2DF87E7D10594F7BF241783 /* Typealiases.swift */,
 			);
-			name = Src;
 			path = Src;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -115,13 +114,13 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = "$subproj";
+			name = $subproj;
 			sourceTree = "<group>";
 		};
 		EA9AA3835237283417A5EDFB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E14AFDC2AE6EB419ACB20468 /* Fwk.framework */,
+				E14AFDC2AE6EB419ACB20468 /* XCERequirement.framework */,
 				C6FB15FD5A4F71BD3C48083A /* Tests.xctest */,
 			);
 			name = Products;
@@ -142,7 +141,6 @@
 			children = (
 				FA17AB4EF45B6A0EEF0C1D03 /* Main.swift */,
 			);
-			name = Tst;
 			path = Tst;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -171,7 +169,7 @@
 			);
 			name = Fwk;
 			productName = Fwk;
-			productReference = E14AFDC2AE6EB419ACB20468 /* Fwk.framework */;
+			productReference = E14AFDC2AE6EB419ACB20468 /* XCERequirement.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		9F2FAD72DA0CBB817EC2FC9C /* Tests */ = {
