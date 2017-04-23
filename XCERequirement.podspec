@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.version                   = '1.4.1'
   s.homepage                  = companyGitHubPage + '/' + projName
   
-  s.source                    = { :git => companyGitHubAccount + '/' + projName + '.git', :tag => '#{s.version}' }
+  s.source                    = { :git => companyGitHubAccount + '/' + projName + '.git', :tag => s.version }
   s.source_files              = 'Src/**/*.swift'
 
   s.ios.deployment_target     = '8.0'
