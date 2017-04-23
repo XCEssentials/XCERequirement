@@ -9,7 +9,7 @@
 import XCTest
 
 //@testable
-import MKHRequirement
+import XCERequirement
 
 //===
 
@@ -22,7 +22,7 @@ class Main: XCTestCase
     func testBasic()
     {
         if
-            r.isSatisfied(with: 14)
+            r.isFulfilled(with: 14)
         {
             print("\(r.title) -> YES")
         }
