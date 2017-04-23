@@ -3,6 +3,7 @@ projSummary = 'Describe requirements in a declarative, easy-readable format.'
 companyPrefix = 'XCE'
 companyName = 'XCEssentials'
 companyGitHubAccount = 'https://github.com/' + companyName
+companyGitHubPage = 'https://' + companyName + '.github.io'
 
 #===
 
@@ -10,7 +11,8 @@ Pod::Spec.new do |s|
 
   s.name                      = companyPrefix + projName
   s.summary                   = projSummary
-  s.version                   = '1.4.0'
+  s.version                   = '1.4.1'
+  s.homepage                  = companyGitHubPage + '/' + projName
   
   s.source                    = { :git => companyGitHubAccount + '/' + projName + '.git', :tag => '#{s.version}' }
   s.source_files              = 'Src/**/*.swift'
