@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
 
   s.name                      = companyPrefix + projName
   s.summary                   = projSummary
-  s.version                   = '1.3.0'
+  s.version                   = '1.4.0'
   
   s.source                    = { :git => companyGitHubAccount + '/' + projName + '.git', :tag => '#{s.version}' }
   s.source_files              = 'Src/**/*.swift'
