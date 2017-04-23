@@ -1,7 +1,12 @@
-## Problem
+[![GitHub tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg)](https://cocoapods.org/?q=XCERequirement)
+[![license](https://img.shields.io/github/license/XCEssentials/Requirement.svg)](https://opensource.org/licenses/MIT)
+[![CocoaPods](https://img.shields.io/cocoapods/v/XCERequirement.svg)](https://cocoapods.org/?q=XCERequirement)
+[![CocoaPods](https://img.shields.io/cocoapods/p/XCERequirement.svg)](https://cocoapods.org/?q=XCEUniFlow)
+
+# Problem
 When it comes to definition of how an app should work, there are many [requirements](https://en.wikipedia.org/wiki/Requirement) that should be implemented in source code. Every requirement, obviously, can be described in a human-friendly language, as well as formalized in a programming languge (computer-friendly).
 
-## Pre-existing solutions
+# Pre-existing solutions
 
 Usually requirements are being implemented in a batch as part of a task/model/etc. without direct transition of specific requirement into exact line/range of source code in the app.
 
@@ -9,7 +14,7 @@ Usually requirements are being implemented in a batch as part of a task/model/et
 
 Such implementation of requirements is hard to test/validate, keep consistent over time (when minor changes happen in a given requirement) and makes source code hard to understand and reason about.
 
-## Wishlist
+# Wishlist
 
 Ideally there should be a tool that allows:
 
@@ -17,19 +22,15 @@ Ideally there should be a tool that allows:
 2. keep focus on content, make the wrapping expressions as minimal as possible;
 3. automate requirement validation and success/failure reporting to both outer scope and GUI.
 
-## Methodology overview
+# Methodology overview
 
 Each requirement can be evaluated against a given data value (which can be an atomic or complex data type). In the other words, every requirement definition can be represented in form of a function that takes one or several input parameters and returns `Boolean` value - `true` means that requirement is fullfilled with provided input values, and `false` means the opposite.
 
-## How to install
+# How to install
 
-The recommended way is via [CocoaPods](https://cocoapods.org). Just add to your [Podfile](https://guides.cocoapods.org/syntax/podfile.html):
+The recommended way is to install using [CocoaPods](https://cocoapods.org/?q=XCERequirement).
 
-```ruby
-pod 'XCERequirement'
-```
-
-## How it works
+# How it works
 
 It's a small and very simple, yet powerful library.
 
@@ -37,7 +38,7 @@ It's a small and very simple, yet powerful library.
 
 To define a requirement, create an instace of `Requirement`. Its consturctor accepts two necessary parameters - human friendly description in form of a `String` and a closure that implements formal representation. Moreover, `Requirement` is a generic type, `Input` generic type represents the type of expected input parameters for the closure.
 
-## How to use
+# How to use
 
 Here is an example of how to create a requirements, that an integer number should not be equal to zero.
 
@@ -95,7 +96,7 @@ The `RequirementNotFulfilled` data type has two parameters:
 - `let requirement: String` that contains description of the requirement;
 - `let input: Any` that contains exact input data value that has been evaluated and failed to fulfill the requirement.
 
-### Inline helpers
+## Inline helpers
 
 While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers, that use the same idea, but provide special API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are incapsulated into special `enum` called `REQ`, they all throw an instace of `VerificationFailed` error when requirement is not fulfilled, some of them may return a value that can be used further in the code.
 
