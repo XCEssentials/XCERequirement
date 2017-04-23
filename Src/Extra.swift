@@ -33,13 +33,13 @@ extension REQ
     }
     
     static
-    func isTrue(
+    func isNotNil(
         _ description: String,
-        _ body: () -> Bool
+        _ body: () -> Any?
         ) throws
     {
         guard
-            body()
+            body() != nil
         else
         {
             throw VerificationFailed(description)
@@ -61,13 +61,13 @@ extension REQ
     }
     
     static
-    func isNotNil(
+    func isTrue(
         _ description: String,
-        _ body: () -> Any?
+        _ body: () -> Bool
         ) throws
     {
         guard
-            body() != nil
+            body()
         else
         {
             throw VerificationFailed(description)

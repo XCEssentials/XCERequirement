@@ -44,7 +44,7 @@ extension Requirement
 public
 extension Requirement
 {
-    func isSatisfied(with input: Input) -> Bool
+    func isFulfilled(with input: Input) -> Bool
     {
         return body(input)
     }
@@ -54,7 +54,7 @@ extension Requirement
         if
             !body(input)
         {
-            throw RequirementNotSatisfied(title, input: input)
+            throw RequirementNotFulfilled(title, input: input)
         }
     }
 }
