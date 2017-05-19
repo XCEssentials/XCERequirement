@@ -4,13 +4,14 @@
 [![CocoaPods](https://img.shields.io/cocoapods/p/XCERequirement.svg)](https://cocoapods.org/?q=XCEUniFlow)
 
 # Problem
+
 When it comes to definition of how an app should work, there are many [requirements](https://en.wikipedia.org/wiki/Requirement) that should be implemented in source code. Every requirement, obviously, can be described in a human-friendly language, as well as formalized in a programming languge (computer-friendly).
 
 # Pre-existing solutions
 
 Usually requirements are being implemented in a batch as part of a task/model/etc. without direct transition of specific requirement into exact line/range of source code in the app.
 
- In most cases, every single requirement from specification (task definition) is being translated into some code in data model or business logic and that's it. That means there is not much semantics provided by such implementation - if this requirement is not fullfilled, it's not clear how to report the issue formally to the outer scope and/or in human-friendly format to the user (via GUI). If such reporting is implemented - it usually leads to spreading of the requirement implementation into few different parts: actual requirement check, how it's being represented for fromal reporting to outer scope, and how it is being represented for human-friendly reporting via GUI.
+In most cases, every single requirement from specification (task definition) is being translated into some code in data model or business logic and that's it. That means there is not much semantics provided by such implementation - if this requirement is not fullfilled, it's not clear how to report the issue formally to the outer scope and/or in human-friendly format to the user (via GUI). If such reporting is implemented - it usually leads to spreading of the requirement implementation into few different parts: actual requirement check, how it's being represented for fromal reporting to outer scope, and how it is being represented for human-friendly reporting via GUI.
 
 Such implementation of requirements is hard to test/validate, keep consistent over time (when minor changes happen in a given requirement) and makes source code hard to understand and reason about.
 
