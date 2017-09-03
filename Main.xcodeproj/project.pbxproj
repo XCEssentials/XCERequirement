@@ -8,11 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1873BFA7B8C68F0AF3D7D184 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB7C7E956B9801BD726B08 /* Foundation.framework */; };
-		4BFB119D4DC6870DD429080D /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DEDABD410E7112B206E77C /* Errors.swift */; };
-		56EB405F5737543EF4CE70DC /* Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2850F1A09D8CDBC73B8CBB8 /* Extra.swift */; };
-		87D1A44D4C7E779DCABCC517 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2470667E20D80257427CB /* Typealiases.swift */; };
+		9490B4801F5B96A3002C96AE /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9490B47F1F5B96A3002C96AE /* Requirement.swift */; };
 		D6502E8151FAA7C02E08E2F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB7C7E956B9801BD726B08 /* Foundation.framework */; };
-		DD2B181056C7808795E29579 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966222881100640C885BA15F /* Requirement.swift */; };
 		E13890D442F1AE026D83E058 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D51F264DE4996AFEABCBD7A /* Main.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,13 +47,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		17C2470667E20D80257427CB /* Typealiases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
-		35D0A6E044EA3029BC4631DC /* Fwk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Fwk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		41DEDABD410E7112B206E77C /* Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		35D0A6E044EA3029BC4631DC /* Fwk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Fwk.framework; path = XCERequirement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84BB7C7E956B9801BD726B08 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		966222881100640C885BA15F /* Requirement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
+		9490B47F1F5B96A3002C96AE /* Requirement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
 		9D51F264DE4996AFEABCBD7A /* Main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		B2850F1A09D8CDBC73B8CBB8 /* Extra.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extra.swift; sourceTree = "<group>"; };
 		C5A913207DADA47EDF13E2AB /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -80,24 +74,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0F88A64800B9ECBB8ED8038B /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				41DEDABD410E7112B206E77C /* Errors.swift */,
-				B2850F1A09D8CDBC73B8CBB8 /* Extra.swift */,
-				966222881100640C885BA15F /* Requirement.swift */,
-				17C2470667E20D80257427CB /* Typealiases.swift */,
-			);
-			name = Sources;
-			path = Sources;
-			sourceTree = SOURCE_ROOT;
-		};
 		4A867ED38D8BD1BFA6D2FE34 = {
 			isa = PBXGroup;
 			children = (
 				AF9D645AB2562DFB227795D5 /* Frameworks */,
 				8C1AB8C2259316760B27E54A /* Products */,
-				0F88A64800B9ECBB8ED8038B /* Sources */,
+				9490B47E1F5B96A3002C96AE /* Sources */,
 				E3AE93DA96B29122F9619695 /* Tests */,
 			);
 			sourceTree = "<group>";
@@ -119,6 +101,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		9490B47E1F5B96A3002C96AE /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9490B47F1F5B96A3002C96AE /* Requirement.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
 		AF9D645AB2562DFB227795D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,7 +123,6 @@
 			children = (
 				9D51F264DE4996AFEABCBD7A /* Main.swift */,
 			);
-			name = Tests;
 			path = Tests;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -141,7 +130,7 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = "$local";
+			name = $local;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,7 +214,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
-			showEnvVarsInLog = 1;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -234,10 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BFB119D4DC6870DD429080D /* Errors.swift in Sources */,
-				56EB405F5737543EF4CE70DC /* Extra.swift in Sources */,
-				DD2B181056C7808795E29579 /* Requirement.swift in Sources */,
-				87D1A44D4C7E779DCABCC517 /* Typealiases.swift in Sources */,
+				9490B4801F5B96A3002C96AE /* Requirement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

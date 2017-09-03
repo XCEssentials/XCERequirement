@@ -15,34 +15,17 @@ import XCERequirement
 
 class Main: XCTestCase
 {
-    let r = Require<Int>("Non-zero") { $0 != 0 }
-    
-    //===
-    
-    func testBasic()
-    {
-        if
-            r.isFulfilled(with: 14)
-        {
-            print("\(r.title) -> YES")
-        }
-        else
-        {
-            print("\(r.title) -> NO")
-            XCTFail()
-        }
-    }
-    
-    func testExtra()
+    func testFalseClosure()
     {
         do
         {
-            try r.check(with: 0)
-            XCTFail() // should never get to this point
+            try Require("Non-zero").isFalse { 14 == 0 }
+            print("YES")
         }
         catch
         {
-            print(error)
+            print("NO")
+            XCTFail()
         }
     }
 }
