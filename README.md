@@ -1,13 +1,20 @@
-[![GitHub tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg)](https://cocoapods.org/?q=XCERequirement)
-[![license](https://img.shields.io/github/license/XCEssentials/Requirement.svg)](https://opensource.org/licenses/MIT)
-[![CocoaPods](https://img.shields.io/cocoapods/v/XCERequirement.svg)](https://cocoapods.org/?q=XCERequirement)
-[![CocoaPods](https://img.shields.io/cocoapods/p/XCERequirement.svg)](https://cocoapods.org/?q=XCEUniFlow)
+[![GitHub License](https://img.shields.io/github/license/XCEssentials/Requirement.svg?longCache=true)](LICENSE)
+[![GitHub Tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg?longCache=true)](https://github.com/XCEssentials/Requirement/tags)
+[![Swift Package Manager Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?longCache=true)](Package.swift)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?longCache=true)](https://github.com/Carthage/Carthage)
+[![Written in Swift](https://img.shields.io/badge/Swift-5.0-orange.svg?longCache=true)](https://swift.org)
+[![Supported platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20Linux-blue.svg?longCache=true)](Package.swift)
+[![Build Status](https://travis-ci.com/XCEssentials/Requirement.svg?branch=master)](https://travis-ci.com/XCEssentials/Requirement)
 
-# Problem
+# Requirement
+
+Describe requirements in a declarative, easy-readable format
+
+## Problem
 
 When it comes to definition of how an app should work, there are many [requirements](https://en.wikipedia.org/wiki/Requirement) that should be implemented in source code. Every requirement, obviously, can be described in a human-friendly language, as well as formalized in a programming languge (computer-friendly).
 
-# Pre-existing solutions
+## Pre-existing solutions
 
 Usually requirements are being implemented in a batch as part of a task/model/etc. without direct transition of specific requirement into exact line/range of source code in the app.
 
@@ -15,7 +22,7 @@ In most cases, every single requirement from specification (task definition) is 
 
 Such implementation of requirements is hard to test/validate, keep consistent over time (when minor changes happen in a given requirement) and makes source code hard to understand and reason about.
 
-# Wishlist
+## Wishlist
 
 Ideally there should be a tool that allows:
 
@@ -23,15 +30,15 @@ Ideally there should be a tool that allows:
 2. keep focus on content, make the wrapping expressions as minimal as possible;
 3. automate requirement validation and success/failure reporting to both outer scope and GUI.
 
-# Methodology overview
+## Methodology overview
 
 Each requirement can be evaluated against a given data value (which can be an atomic or complex data type). In the other words, every requirement definition can be represented in form of a function that takes one or several input parameters and returns `Boolean` value - `true` means that requirement is fullfilled with provided input values, and `false` means the opposite.
 
-# How to install
+## How to install
 
 The recommended way is to install using [CocoaPods](https://cocoapods.org/?q=XCERequirement).
 
-# How it works
+## How it works
 
 It's a small and very simple, yet powerful library.
 
@@ -39,7 +46,7 @@ It's a small and very simple, yet powerful library.
 
 To define a requirement, create an instace of `Requirement`. Its consturctor accepts two necessary parameters - human friendly description in form of a `String` and a closure that implements formal representation. Moreover, `Requirement` is a generic type, `Input` generic type represents the type of expected input parameters for the closure.
 
-# How to use
+## How to use
 
 Here is an example of how to create a requirements, that an integer number should not be equal to zero.
 
