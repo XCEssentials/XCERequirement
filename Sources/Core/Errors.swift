@@ -25,74 +25,18 @@
  */
 
 public
-struct Requirement<Input>: CustomStringConvertible
+struct UnsatisfiedRequirement: Swift.Error
 {
     public
-    typealias Body = (
-        _ input: Input
-        ) throws -> Bool
-
-    //---
-
-    public
-    let description: String
-
-    private
-    let body: Body
-
-    // MARK: - Initializers
-
-    public
-    init(
-        _ description: String,
-        _ body: @escaping Body
-        )
-    {
-        self.description = description
-        self.body = body
-    }
-}
-
-// MARK: - Validation
-
-public
-extension Requirement
-{
-    func isValid(
-        value: Input
-        ) -> Bool
-    {
-        do
-        {
-            try validate(value: value)
-            return true
-        }
-        catch
-        {
-            return false
-        }
-    }
+    let requirement: String
     
-    func validate(
-        file: String = #file,
-        line: Int = #line,
-        function: String = #function,
-        value: Input
-        ) throws
-    {
-        guard
-            try body(value)
-        else
-        {
-            throw UnsatisfiedRequirement(
-                requirement: description,
-                input: value,
-                context: (
-                    file,
-                    line,
-                    function
-                )
-            )
-        }
-    }
+    public
+    let input: Any
+    
+    public
+    let context: (
+        file: String,
+        line: Int,
+        function: String
+        )
 }
