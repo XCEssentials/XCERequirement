@@ -13,19 +13,17 @@ import XCERequirement
 
 //===
 
-class Main: XCTestCase
+class AllTests: XCTestCase
 {
-    func testFalseClosure()
+    func testSimpleRequirement()
     {
         do
         {
-            try Require("Non-zero").isFalse { 14 == 0 }
-            print("YES")
+            try Requirement("Non-zero value"){ $0 != 0 }.validate(value: 14)
         }
         catch
         {
-            print("NO")
-            XCTFail()
+            XCTFail("Should never get here")
         }
     }
 }
