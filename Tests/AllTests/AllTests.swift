@@ -19,7 +19,7 @@ class AllTests: XCTestCase
     {
         do
         {
-            try Requirement("Non-zero value"){ $0 != 0 }.validate(value: 14)
+            try Requirement("Non-zero value"){ $0 != 0 }.validate(14)
         }
         catch
         {
