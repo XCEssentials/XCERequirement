@@ -59,12 +59,12 @@ public
 extension Requirement
 {
     func isValid(
-        value: Input
+        _ value: Input
         ) -> Bool
     {
         do
         {
-            try validate(value: value)
+            try validate(value)
             return true
         }
         catch
@@ -77,7 +77,7 @@ extension Requirement
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        value: Input
+        _ value: Input
         ) throws
     {
         guard
