@@ -82,7 +82,6 @@ try ReadMe()
         repo: project.name
     )
     .addSwiftPMCompatibleBadge()
-    .addCarthageCompatibleBadge()
     .addWrittenInSwiftBadge(
         version: Spec.BuildSettings.swiftVersion.value
     )
@@ -141,7 +140,6 @@ try Git
         # we don't need to store project file,
         # as we generate it on-demand
         *.\(Xcode.Project.extension)
-        !\(productName).\(Xcode.Project.extension)
         """
     )
     .prepare()
