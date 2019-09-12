@@ -193,7 +193,7 @@ try CustomTextFile("""
     #!/bin/bash
 
     # http://www.grymoire.com/Unix/Sed.html#TOC
-    sed -i '' -e "s|PRODUCT_BUNDLE_IDENTIFIER = \"\(product.name)\"|PRODUCT_BUNDLE_IDENTIFIER = \(product.bundleId)|g" \(product.name).xcodeproj/project.pbxproj
+    sed -i '' -e "s|PRODUCT_BUNDLE_IDENTIFIER = \\"\(product.name)\\"|PRODUCT_BUNDLE_IDENTIFIER = \(product.bundleId)|g" \(product.name).xcodeproj/project.pbxproj
 
     """
     )
