@@ -319,7 +319,7 @@ try CustomTextFile("""
     swift package generate-xcodeproj --xcconfig-overrides $xcconfigFile
 
     # NOTE: the xcconfig file will be applied to all dependency targets as well,
-    # but it's not an issue for in this case.
+    # but it's not an issue in this case.
 
     echo "Overriding PRODUCT_BUNDLE_IDENTIFIER with <$bundleId> in project file due to bug in SwiftPM."
     # SwiftPM overrides this value even after applying custom xcconfig file.
