@@ -112,7 +112,9 @@ try ReadMe()
         account: company.name,
         repo: project.name
     )
+    .addCocoaPodsVersionBadge(podName: product.name)
     .addSwiftPMCompatibleBadge()
+    .addCarthageCompatibleBadge()
     .addWrittenInSwiftBadge(
         version: Spec.BuildSettings.swiftVersion.value
     )

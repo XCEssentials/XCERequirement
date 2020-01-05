@@ -1,5 +1,6 @@
 [![GitHub License](https://img.shields.io/github/license/XCEssentials/Requirement.svg?longCache=true)](LICENSE)
 [![GitHub Tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg?longCache=true)](https://github.com/XCEssentials/Requirement/tags)
+[![CocoaPods Version](https://img.shields.io/cocoapods/v/XCERequirement.svg?longCache=true)](XCERequirement.podspec)
 [![Swift Package Manager Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?longCache=true)](Package.swift)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?longCache=true)](https://github.com/Carthage/Carthage)
 [![Written in Swift](https://img.shields.io/badge/Swift-5.0-orange.svg?longCache=true)](https://swift.org)
@@ -8,7 +9,7 @@
 
 # Requirement
 
-Describe requirements in a declarative, easy-readable format
+Describe requirements in a declarative, easy-readable format.
 
 ## Problem
 
