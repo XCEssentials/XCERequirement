@@ -26,15 +26,21 @@ let travisCI = (
     branch: "master"
 )
 
-let company = (
+let company = try Spec.Company(
     prefix: "XCE",
     name: remoteRepo.accountName
 )
 
-let project = (
+let project = try Spec.Project(
     name: remoteRepo.name,
     summary: "Describe requirements in a declarative, easy-readable format",
-    copyrightYear: 2016
+    copyrightYear: 2016,
+    deploymentTargets: [
+        .iOS : "9.0",
+        .watchOS : "3.0", // be prepared to fail 'pod lib lint' if uncomment!
+        .tvOS : "9.0",
+        .macOS : "10.11"
+    ]
 )
 
 let product = (
@@ -51,9 +57,14 @@ typealias PerSubSpec<T> = (
     tests: T
 )
 
+let cocoaPodsSubSpecs: PerSubSpec = (
+    Spec.CocoaPod.SubSpec("Core"),
+    Spec.CocoaPod.SubSpec.tests()
+)
+
 let subSpecs: PerSubSpec = (
-    "Core",
-    "AllTests"
+    cocoaPodsSubSpecs.core.name,
+    cocoaPodsSubSpecs.tests.name
 )
 
 let targetNames: PerSubSpec = (
@@ -69,6 +80,19 @@ let sourcesLocations: PerSubSpec = (
 let swiftPMPackageManifestFileName = "Package.swift"
 let prepareForCarthageXcconfigFileName = "PrepareForCarthage.xcconfig"
 let prepareForCarthageShFileName = "PrepareForCarthage.sh"
+
+let license: CocoaPods.Podspec.License = (
+    License.MIT.licenseType,
+    License.MIT.relativeLocation
+)
+
+var cocoaPod = try Spec.CocoaPod(
+    companyInfo: .from(company),
+    productInfo: .from(project),
+    authors: authors
+)
+
+try? cocoaPod.readCurrentVersion()
 
 // MARK: Parameters - Summary
 
@@ -147,9 +171,74 @@ try Git
         # we don't need to store project file,
         # as we generate it on-demand
         *.\(Xcode.Project.extension)
+        .vendor
         """
     )
     .prepare()
+    .writeToFileSystem()
+
+// MARK: Write - Bundler - Gemfile
+
+// https://docs.fastlane.tools/getting-started/ios/setup/#use-a-gemfile
+try Bundler
+    .Gemfile(
+        basicFastlane: false,
+        """
+        gem '\(CocoaPods.gemName)'
+        gem '\(CocoaPods.Generate.gemName)'
+        """
+    )
+    .prepare()
+    .writeToFileSystem()
+
+// MARK: Write - CocoaPods - Podspec
+
+try CocoaPods
+    .Podspec
+    .withSubSpecs(
+        project: project,
+        company: cocoaPod.company,
+        version: cocoaPod.currentVersion,
+        license: license,
+        authors: cocoaPod.authors,
+        swiftVersion: Spec.BuildSettings.swiftVersion.value,
+        globalSettings: {
+            
+            globalContext in
+            
+            //declare support for all defined deployment targets
+            
+            project
+                .deploymentTargets
+                .forEach{ globalContext.settings(for: $0) }
+        },
+        subSpecs: {
+
+            let core = cocoaPodsSubSpecs.core
+            
+            $0.subSpec(core.name){
+
+                $0.settings(
+                    .sourceFiles(core.sourcesPattern)
+                )
+            }
+        },
+        testSubSpecs: {
+            
+            let tests = cocoaPodsSubSpecs.tests
+
+            $0.testSubSpec(tests.name){
+
+                $0.settings(
+                    .noPrefix("requires_app_host = false"),
+                    .sourceFiles(tests.sourcesPattern)
+                )
+            }
+        }
+    )
+    .prepare(
+        for: cocoaPod
+    )
     .writeToFileSystem()
 
 // MARK: Write - Package.swift
