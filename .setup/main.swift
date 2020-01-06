@@ -92,7 +92,23 @@ var cocoaPod = try Spec.CocoaPod(
     authors: authors
 )
 
-try? cocoaPod.readCurrentVersion()
+do
+{
+    try cocoaPod.readCurrentVersion()
+}
+catch
+{
+    print("NOTE: Unable to read current POD version.")
+}
+
+do
+{
+    try cocoaPod.autodetectTargetVersionFromBranch()
+}
+catch
+{
+    print("NOTE: Unable to detect current/target version from git branch.")
+}
 
 // MARK: Parameters - Summary
 
