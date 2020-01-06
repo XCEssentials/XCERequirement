@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
     s.name          = 'XCERequirement'
     s.summary       = 'Describe requirements in a declarative, easy-readable format'
-    s.version       = '0.0.1'
+    s.version       = '2.1.3'
     s.homepage      = 'https://XCEssentials.github.io/Requirement'
 
     s.source        = { :git => 'https://github.com/XCEssentials/Requirement.git', :tag => s.version }
