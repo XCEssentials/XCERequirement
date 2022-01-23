@@ -27,6 +27,30 @@ class AllTests: XCTestCase
         }
     }
     
+    
+    func test_requirement_unsatisfiedCondition()
+    {
+        let value = 0
+
+        do
+        {
+            try Requirement("Non-zero value"){ $0 != 0 }.validate(0)
+        }
+        catch
+        {
+            guard
+                let unsatisfiedRequirement = error as? UnsatisfiedRequirement
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(unsatisfiedRequirement.description, "Non-zero value")
+            XCTAssert(unsatisfiedRequirement.input as! Int == 0)
+            XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
+        }
+    }
+    
     func test_inlineCheck_success()
     {
         let value = 14
