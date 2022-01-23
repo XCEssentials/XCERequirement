@@ -25,91 +25,74 @@
  */
 
 public
-struct UnsatisfiedRequirement: Swift.Error
+enum FailedCheck: Swift.Error
 {
-    public
-    let description: String
+    case errorDuringConditionCheck(
+        description: String,
+        error: Error,
+        context: (
+            file: String,
+            line: Int,
+            function: String
+            )
+    )
     
-    public
-    let input: Any
-    
-    public
-    let context: (
-        file: String,
-        line: Int,
-        function: String
-        )
+    case unsatisfiedCondition(
+        description: String,
+        context: (
+            file: String,
+            line: Int,
+            function: String
+            )
+    )
 }
 
 //---
 
 public
-struct Requirement<Input>: CustomStringConvertible
+enum Check
 {
     public
-    typealias Body = (Input) throws -> Bool
-
-    //---
-
-    public
-    let description: String
-
-    private
-    let body: Body
-
-    // MARK: - Initializers
-
-    public
-    init(
-        _ description: String,
-        _ body: @escaping Body
-        )
-    {
-        self.description = description
-        self.body = body
-    }
-}
-
-// MARK: - Validation
-
-public
-extension Requirement
-{
-    func isValid(
-        _ value: Input
-        ) -> Bool
-    {
-        do
-        {
-            try validate(value)
-            return true
-        }
-        catch
-        {
-            return false
-        }
-    }
-    
-    func validate(
+    static
+    func that(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        _ value: Input
+        _ description: String,
+        _ inputBody: @autoclosure () throws -> Bool
         ) throws
     {
-        guard
-            try body(value)
-        else
+        let result: Bool
+        
+        //---
+        do
         {
-            throw UnsatisfiedRequirement(
+            result = try inputBody()
+        }
+        catch
+        {
+            throw FailedCheck.errorDuringConditionCheck(
                 description: description,
-                input: value,
+                error: error,
                 context: (
                     file,
                     line,
                     function
-                )
-            )
+                ))
+        }
+        
+        //---
+        
+        if
+            !result
+        {
+            throw FailedCheck.unsatisfiedCondition(
+                description: description,
+                context: (
+                    file,
+                    line,
+                    function
+                ))
         }
     }
 }
