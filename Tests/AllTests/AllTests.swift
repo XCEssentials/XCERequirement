@@ -15,7 +15,7 @@ import XCERequirement
 
 class AllTests: XCTestCase
 {
-    func testSimpleRequirement()
+    func test_requirement_success()
     {
         do
         {
@@ -23,7 +23,85 @@ class AllTests: XCTestCase
         }
         catch
         {
-            XCTFail("Should never get here")
+            XCTFail("Unexpected failure")
+        }
+    }
+    
+    func test_inlineCheck_success()
+    {
+        let value = 14
+        
+        do
+        {
+            try Check.that("Non-zero value", value != 0)
+        }
+        catch
+        {
+            XCTFail("Unexpected failure")
+        }
+    }
+    
+    func test_inlineCheck_errorDuringConditionCheck()
+    {
+        enum Container
+        {
+            enum NestedError: Error { case one }
+            
+            static
+            var failingProperty: Bool
+            {
+                get throws
+                {
+                    throw NestedError.one
+                }
+            }
+        }
+        
+        do
+        {
+            try Check.that("Non-zero value", Container.failingProperty )
+            
+        }
+        catch
+        {
+            guard
+                case let FailedCheck.errorDuringConditionCheck(desc, nestedError, context) = error
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+            
+            XCTAssertEqual(desc, "Non-zero value")
+            XCTAssertTrue(context.function.contains("test_inlineCheck_errorDuringConditionCheck"))
+            
+            guard
+                case Container.NestedError.one = nestedError
+            else
+            {
+                return XCTFail("Unexpected nested error")
+            }
+        }
+    }
+    
+    func test_inlineCheck_unsatisfiedCondition()
+    {
+        let value = 0
+
+        do
+        {
+            try Check.that("Non-zero value", value != 0 )
+        }
+        catch
+        {
+            guard
+                case let FailedCheck.unsatisfiedCondition(desc, context) = error
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(desc, "Non-zero value")
+            XCTAssertTrue(context.function.contains("test_inlineCheck_unsatisfiedCondition"))
         }
     }
 }

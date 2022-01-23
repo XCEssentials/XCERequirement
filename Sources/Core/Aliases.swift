@@ -28,7 +28,4 @@ public
 typealias Require = Requirement
 
 public
-typealias Check = Requirement
-
-public
 typealias Condition = Requirement
