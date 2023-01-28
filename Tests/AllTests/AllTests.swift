@@ -34,7 +34,7 @@ class AllTests: XCTestCase
 
         do
         {
-            try Requirement("Non-zero value"){ $0 != 0 }.validate(0)
+            try Requirement("Non-zero value"){ $0 != value }.validate(value)
         }
         catch
         {
@@ -46,7 +46,7 @@ class AllTests: XCTestCase
             }
 
             XCTAssertEqual(unsatisfiedRequirement.description, "Non-zero value")
-            XCTAssert(unsatisfiedRequirement.input as! Int == 0)
+            XCTAssert(unsatisfiedRequirement.input as! Int == value)
             XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
         }
     }
@@ -83,7 +83,10 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.that("Non-zero value", Container.failingProperty )
+            try Check.that("Non-zero value") {
+                
+                try Container.failingProperty
+            }
             
         }
         catch
