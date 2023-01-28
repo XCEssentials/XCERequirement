@@ -59,7 +59,26 @@ enum Check
         line: Int = #line,
         function: String = #function,
         _ description: String,
-        _ inputBody: @autoclosure () throws -> Bool
+        _ input: Bool
+        ) throws
+    {
+        try Check.that(
+            file: file,
+            line: line,
+            function: function,
+            description,
+            { input }
+        )
+    }
+    
+    public
+    static
+    func that(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String,
+        _ inputBody: () throws -> Bool
         ) throws
     {
         let result: Bool
