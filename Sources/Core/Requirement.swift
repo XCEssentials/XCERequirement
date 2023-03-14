@@ -76,12 +76,20 @@ public
 extension Requirement
 {
     func isValid(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
         _ value: Input
         ) -> Bool
     {
         do
         {
-            try validate(value)
+            try validate(
+                file: file,
+                line: line,
+                function: function,
+                value
+            )
             return true
         }
         catch
