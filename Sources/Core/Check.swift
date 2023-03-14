@@ -59,8 +59,27 @@ enum Check
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        _ input: T?,
-        _ description: String? = nil
+        _ input: T?
+        ) throws -> T
+    {
+        try Check.that(
+            file: file,
+            line: line,
+            function: function,
+            "Non-nil instance of type \(String(reflecting: T.self))",
+            input
+        )
+    }
+    
+    @discardableResult
+    public
+    static
+    func that<T>(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String,
+        _ input: T?
         ) throws -> T
     {
         if
@@ -70,13 +89,8 @@ enum Check
         }
         else
         {
-            let defaultDescription: () -> String = {
-                
-                "Non-nil instance of type \(String(reflecting: T.self))"
-            }
-            
             throw FailedCheck.unsatisfiedCondition(
-                description: description ?? defaultDescription(),
+                description: description,
                 context: (
                     file,
                     line,

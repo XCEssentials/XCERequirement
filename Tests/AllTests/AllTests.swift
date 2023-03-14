@@ -148,6 +148,32 @@ class AllTests: XCTestCase
         {
             XCTFail("Unexpected error")
         }
+        
+        do
+        {
+            try Check.that("Value is set", value)
+            
+            let output: Int = try Check.that("Value is set", value)
+            
+            XCTAssertEqual(output, 1)
+        }
+        catch
+        {
+            XCTFail("Unexpected error")
+        }
+        
+        do
+        {
+            try Check.that("Value is set", 2)
+            
+            let output: Int = try Check.that("Value is set", 2)
+            
+            XCTAssertEqual(output, 2)
+        }
+        catch
+        {
+            XCTFail("Unexpected error")
+        }
     }
     
     func test_nonEmpty_failure()
@@ -172,7 +198,7 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.nonEmpty(value, "Custom check description")
+            try Check.that("Custom check description", value)
         }
         catch
         {
