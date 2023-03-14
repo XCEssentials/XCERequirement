@@ -52,6 +52,40 @@ enum FailedCheck: Swift.Error
 public
 enum Check
 {
+    @discardableResult
+    public
+    static
+    func nonEmpty<T>(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ input: T?,
+        _ description: String? = nil
+        ) throws -> T
+    {
+        if
+            let result = input
+        {
+            return result
+        }
+        else
+        {
+            let defaultDescription: () -> String = {
+                
+                "Non-nil instance of type \(String(reflecting: T.self))"
+            }
+            
+            throw FailedCheck.unsatisfiedCondition(
+                description: description ?? defaultDescription(),
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+    }
+    
     public
     static
     func that(
@@ -97,7 +131,8 @@ enum Check
                     file,
                     line,
                     function
-                ))
+                )
+            )
         }
         
         //---
@@ -111,7 +146,8 @@ enum Check
                     file,
                     line,
                     function
-                ))
+                )
+            )
         }
     }
 }
