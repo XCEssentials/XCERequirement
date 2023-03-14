@@ -131,4 +131,59 @@ class AllTests: XCTestCase
             XCTAssertTrue(context.function.contains("test_inlineCheck_unsatisfiedCondition"))
         }
     }
+    
+    func test_nonEmpty_successs()
+    {
+        let value: Int? = 1
+        
+        do
+        {
+            try Check.nonEmpty(value)
+            
+            let output: Int = try Check.nonEmpty(value)
+            
+            XCTAssertEqual(output, 1)
+        }
+        catch
+        {
+            XCTFail("Unexpected error")
+        }
+    }
+    
+    func test_nonEmpty_failure()
+    {
+        let value: Int? = nil
+        
+        do
+        {
+            try Check.nonEmpty(value)
+        }
+        catch
+        {
+            switch error
+            {
+                case FailedCheck.unsatisfiedCondition(let desc, _):
+                    XCTAssertEqual(desc, "Non-nil instance of type Swift.Int")
+                    
+                default:
+                    XCTFail("Unexpected error type")
+            }
+        }
+        
+        do
+        {
+            try Check.nonEmpty(value, "Custom check description")
+        }
+        catch
+        {
+            switch error
+            {
+                case FailedCheck.unsatisfiedCondition(let desc, _):
+                    XCTAssertEqual(desc, "Custom check description")
+                    
+                default:
+                    XCTFail("Unexpected error type")
+            }
+        }
+    }
 }
