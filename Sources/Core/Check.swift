@@ -37,6 +37,15 @@ enum FailedCheck: Swift.Error
             )
     )
     
+    case unsatisfiedNonEmptyCondition(
+        description: String,
+        context: (
+            file: String,
+            line: Int,
+            function: String
+            )
+    )
+    
     case unsatisfiedCondition(
         description: String,
         context: (
@@ -59,37 +68,42 @@ enum Check
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        _ input: T?
-        ) throws -> T
-    {
-        try Check.that(
-            file: file,
-            line: line,
-            function: function,
-            "Non-nil instance of type \(String(reflecting: T.self))",
-            input
-        )
-    }
-    
-    @discardableResult
-    public
-    static
-    func that<T>(
-        file: String = #file,
-        line: Int = #line,
-        function: String = #function,
-        _ description: String,
-        _ input: T?
-        ) throws -> T
-    {
+        _ description: String? = nil,
+        _ inputBody: () throws -> T?
+    ) throws -> T {
+        
+        let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
+        let resultMaybe: T?
+        
+        //---
+        
+        do
+        {
+            resultMaybe = try inputBody()
+        }
+        catch
+        {
+            throw FailedCheck.errorDuringConditionCheck(
+                description: description,
+                error: error,
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+        
+        //---
+        
         if
-            let result = input
+            let result = resultMaybe
         {
             return result
         }
         else
         {
-            throw FailedCheck.unsatisfiedCondition(
+            throw FailedCheck.unsatisfiedNonEmptyCondition(
                 description: description,
                 context: (
                     file,
@@ -108,8 +122,8 @@ enum Check
         function: String = #function,
         _ description: String,
         _ input: Bool
-        ) throws
-    {
+    ) throws {
+        
         try Check.that(
             file: file,
             line: line,
@@ -127,8 +141,8 @@ enum Check
         function: String = #function,
         _ description: String,
         _ inputBody: () throws -> Bool
-        ) throws
-    {
+    ) throws {
+        
         let result: Bool
         
         //---

@@ -138,22 +138,9 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.nonEmpty(value)
+            try Check.nonEmpty { value }
             
-            let output: Int = try Check.nonEmpty(value)
-            
-            XCTAssertEqual(output, 1)
-        }
-        catch
-        {
-            XCTFail("Unexpected error")
-        }
-        
-        do
-        {
-            try Check.that("Value is set", value)
-            
-            let output: Int = try Check.that("Value is set", value)
+            let output: Int = try Check.nonEmpty { value }
             
             XCTAssertEqual(output, 1)
         }
@@ -164,9 +151,22 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.that("Value is set", 2)
+            try Check.nonEmpty("Value is set") { value }
             
-            let output: Int = try Check.that("Value is set", 2)
+            let output: Int = try Check.nonEmpty("Value is set") { value }
+            
+            XCTAssertEqual(output, 1)
+        }
+        catch
+        {
+            XCTFail("Unexpected error")
+        }
+        
+        do
+        {
+            try Check.nonEmpty("Value is set") { 2 }
+            
+            let output: Int = try Check.nonEmpty("Value is set") { 2 }
             
             XCTAssertEqual(output, 2)
         }
@@ -182,13 +182,13 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.nonEmpty(value)
+            try Check.nonEmpty { value }
         }
         catch
         {
             switch error
             {
-                case FailedCheck.unsatisfiedCondition(let desc, _):
+                case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
                     XCTAssertEqual(desc, "Non-nil instance of type Swift.Int")
                     
                 default:
@@ -198,13 +198,13 @@ class AllTests: XCTestCase
         
         do
         {
-            try Check.that("Custom check description", value)
+            try Check.nonEmpty("Custom check description") { value }
         }
         catch
         {
             switch error
             {
-                case FailedCheck.unsatisfiedCondition(let desc, _):
+                case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
                     XCTAssertEqual(desc, "Custom check description")
                     
                 default:
