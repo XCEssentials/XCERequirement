@@ -3,7 +3,7 @@
 [![Swift Package Manager Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?longCache=true)](Package.swift)
 [![Written in Swift](https://img.shields.io/badge/Swift-5.3-orange.svg?longCache=true)](https://swift.org)
 [![Supported platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20Linux-blue.svg?longCache=true)](Package.swift)
-[![Build Status](https://travis-ci.com/XCEssentials/Requirement.svg?branch=master)](https://travis-ci.com/XCEssentials/Requirement)
+[![CI](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml/badge.svg)](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml)
 
 # Requirement
 
@@ -67,21 +67,21 @@ When requirement is created, here is an example of how it might be used for chec
 
 ```swift
 if
-    r.isFulfilled(with: 14) // returns Bool
+    r.isValid(14) // returns Bool
 {
 	// given value - 14 (Int) - fulfills the requirement
 
-	// r.title - the description that has been provided
+	// r.description - the description that has been provided
 	// during requirement initialization
 	
-    print("\(r.title) -> YES")
+    print("\(r.description) -> YES")
 }
 else
 {
 	// this code block will be executed,
-    // if 0 will be passed into the r.isFulfilled(...)
+    // if 0 will be passed into r.isValid(...)
 	
-    print("\(r.title) -> NO")
+    print("\(r.description) -> NO")
 }
 ```
 
@@ -90,22 +90,23 @@ Same check can be done by utilizing Swift [error handling](https://developer.app
 ```swift
 do
 {
-    try r.check(with: 0) // this will throw exception
+    try r.validate(0) // this will throw exception
 }
 catch
 {
-    print(error) // error is of 'RequirementNotFulfilled' type
+    print(error) // error is of 'UnsatisfiedRequirement' type
 }
 ```
 
-The `RequirementNotFulfilled` data type has two parameters:
+The `UnsatisfiedRequirement` data type has three parameters:
 
-- `let requirement: String` that contains description of the requirement;
+- `let description: String` that contains description of the requirement;
 - `let input: Any` that contains exact input data value that has been evaluated and failed to fulfill the requirement.
+- `let context: (file: String, line: Int, function: String)` for source context.
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers, that use the same idea, but provide special API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are incapsulated into special `enum` called `REQ`, they all throw an instace of `VerificationFailed` error when requirement is not fulfilled, some of them may return a value that can be used further in the code.
+While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `FailedCheck` error when the check is not fulfilled.
 
 When you have an `Optional` value or you have a function/closure that produces `Optional` value, and you need this value only if it's NOT `nil`, or throw an error otherwise:
 
@@ -113,7 +114,7 @@ When you have an `Optional` value or you have a function/closure that produces `
 // the following expression will throw
 // if the value from closure is 'nil' or just return
 // unwrapped value of the optional from closure overwise
-let nonNilValue = try REQ.value("Value is NOT nil") {
+let nonNilValue = try Check.nonEmpty("Value is NOT nil") {
 	
 	// return here an optional value,
 	// it might be result of an expression 
@@ -127,7 +128,7 @@ Same as the above, but does not return anything. When you have an `Optional` val
 // the following expression does not return anything,
 // it will throw if value IS 'nil'
 // or pass through silently otherwise
-try REQ.isNotNil("Value is NOT nil") {
+try Check.nonEmpty("Value is NOT nil") {
 	
 	// return here an optional value,
 	// it might be result of an expression 
@@ -135,27 +136,13 @@ try REQ.isNotNil("Value is NOT nil") {
 }
 ```
 
-When you have an `Optional` value or you have a function/closure that produces `Optional` value, and you need to make sure that this value IS `nil`, or throw an error otherwise:
-
-```swift
-// the following expression does not return anything,
-// it will throw if value is NOT 'nil'
-// or pass through silently otherwise
-try REQ.isNil("Value IS nil") {
-	
-	// return here an optional value,
-	// it might be result of an expression 
-	// or an optional value captured from the outer scope
-}
-```
-
-When you have an `Bool` value or you have a function/closure that produces `Bool` value, and you want to continue only if it's `true`, or throw an error otherwise (if it's `false`):
+When you have a `Bool` value or you have a function/closure that produces `Bool` value, and you want to continue only if it's `true`, or throw an error otherwise:
 
 ```swift
 // the following expression does not return anything,
 // it will throw if value is 'false'
 // or pass through silently otherwise
-try REQ.isTrue("Value is TRUE") {
+try Check.that("Value is TRUE") {
 	
 	// return here a boolean value,
 	// it might be result of an expression 
@@ -163,6 +150,8 @@ try REQ.isTrue("Value is TRUE") {
 }
 ```
 
-The `VerificationFailed` error type has the only parameter:
+`FailedCheck` has these cases:
 
-- `let description: String` that contains the requirement description passed to the corresponding `REQ.*` function.
+- `errorDuringConditionCheck(description:error:context:)`
+- `unsatisfiedNonEmptyCondition(description:context:)`
+- `unsatisfiedCondition(description:context:)`

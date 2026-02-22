@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - "feature/**"
+      - "release/**"
+      - "hotfix/**"
+  pull_request:
+
+jobs:
+  test:
+    name: "${{ matrix.os }} • Swift ${{ matrix.swift }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+        swift: ["5.10", "6.0"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Run tests
+        run: swift test --parallel
