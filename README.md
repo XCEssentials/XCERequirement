@@ -66,22 +66,29 @@ Note, that If a requirement contains phrases like **AND**, **OR** or any other l
 When requirement is created, here is an example of how it might be used for checking potentially suitable values.
 
 ```swift
-if
-    r.isValid(14) // returns Bool
+do
 {
-	// given value - 14 (Int) - fulfills the requirement
+    if
+        try r.isValid(14) // returns Bool, rethrows check-evaluation errors
+    {
+		// given value - 14 (Int) - fulfills the requirement
 
-	// r.description - the description that has been provided
-	// during requirement initialization
-	
-    print("\(r.description) -> YES")
+		// r.description - the description that has been provided
+		// during requirement initialization
+		
+        print("\(r.description) -> YES")
+    }
+    else
+    {
+		// this code block will be executed,
+        // if 0 will be passed into r.isValid(...)
+		
+        print("\(r.description) -> NO")
+    }
 }
-else
+catch
 {
-	// this code block will be executed,
-    // if 0 will be passed into r.isValid(...)
-	
-    print("\(r.description) -> NO")
+    print(error)
 }
 ```
 
