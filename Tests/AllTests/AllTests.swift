@@ -32,12 +32,10 @@ class AllTests: XCTestCase
     {
         let value = 0
 
-        do
-        {
+        XCTAssertThrowsError(
             try Requirement("Non-zero value"){ $0 != value }.validate(value)
-        }
-        catch
-        {
+        )
+        { error in
             guard
                 let unsatisfiedRequirement = error as? UnsatisfiedRequirement
             else
@@ -81,16 +79,13 @@ class AllTests: XCTestCase
             }
         }
         
-        do
-        {
+        XCTAssertThrowsError(
             try Check.that("Non-zero value") {
                 
                 try Container.failingProperty
             }
-            
-        }
-        catch
-        {
+        )
+        { error in
             guard
                 case let FailedCheck.errorDuringConditionCheck(desc, nestedError, context) = error
             else
@@ -114,12 +109,10 @@ class AllTests: XCTestCase
     {
         let value = 0
 
-        do
-        {
+        XCTAssertThrowsError(
             try Check.that("Non-zero value", value != 0 )
-        }
-        catch
-        {
+        )
+        { error in
             guard
                 case let FailedCheck.unsatisfiedCondition(desc, context) = error
             else
@@ -180,12 +173,7 @@ class AllTests: XCTestCase
     {
         let value: Int? = nil
         
-        do
-        {
-            try Check.nonEmpty { value }
-        }
-        catch
-        {
+        XCTAssertThrowsError(try Check.nonEmpty { value }) { error in
             switch error
             {
                 case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
@@ -196,12 +184,10 @@ class AllTests: XCTestCase
             }
         }
         
-        do
-        {
+        XCTAssertThrowsError(
             try Check.nonEmpty("Custom check description") { value }
-        }
-        catch
-        {
+        )
+        { error in
             switch error
             {
                 case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
