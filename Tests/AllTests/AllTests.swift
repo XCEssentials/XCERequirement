@@ -26,6 +26,24 @@ class AllTests: XCTestCase
             XCTFail("Unexpected failure")
         }
     }
+
+    func test_requirement_validate_rethrowsConditionEvaluationError()
+    {
+        enum TestError: Error { case brokenCondition }
+
+        let requirement = Requirement<Int>("Any value") { _ in
+            throw TestError.brokenCondition
+        }
+
+        XCTAssertThrowsError(try requirement.validate(14)) { error in
+            guard
+                case TestError.brokenCondition = error
+            else
+            {
+                return XCTFail("Unexpected error")
+            }
+        }
+    }
     
     
     func test_requirement_unsatisfiedCondition()
@@ -53,6 +71,51 @@ class AllTests: XCTestCase
             XCTAssertEqual(actualInput, value)
             XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
         }
+    }
+
+    func test_requirement_unsatisfiedCondition_customContext()
+    {
+        let requirement = Requirement<Int>("Non-zero value") { $0 != 0 }
+
+        XCTAssertThrowsError(
+            try requirement.validate(
+                file: "CustomFile.swift",
+                line: 42,
+                function: "customFunction()",
+                0
+            )
+        )
+        { error in
+            guard
+                let unsatisfiedRequirement = error as? UnsatisfiedRequirement
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(unsatisfiedRequirement.context.file, "CustomFile.swift")
+            XCTAssertEqual(unsatisfiedRequirement.context.line, 42)
+            XCTAssertEqual(unsatisfiedRequirement.context.function, "customFunction()")
+        }
+    }
+
+    func test_requirement_isValid()
+    {
+        let requirement = Requirement<Int>("Non-zero value") { $0 != 0 }
+
+        XCTAssertTrue(requirement.isValid(1))
+        XCTAssertFalse(requirement.isValid(0))
+    }
+
+    func test_requirement_isValid_returnsFalseOnThrownConditionError()
+    {
+        enum TestError: Error { case brokenCondition }
+
+        let requirement = Requirement<Int>("Any value") { _ in
+            throw TestError.brokenCondition
+        }
+
+        XCTAssertFalse(requirement.isValid(1))
     }
     
     func test_inlineCheck_success()
@@ -203,5 +266,69 @@ class AllTests: XCTestCase
                     XCTFail("Unexpected error type")
             }
         }
+    }
+
+    func test_nonEmpty_errorDuringConditionCheck_whenInputThrows()
+    {
+        enum TestError: Error { case brokenCondition }
+
+        XCTAssertThrowsError(
+            try Check.nonEmpty("Value is set") { () -> Int? in
+                throw TestError.brokenCondition
+            }
+        )
+        { error in
+            guard
+                case let FailedCheck.errorDuringConditionCheck(desc, nestedError, context) = error
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(desc, "Value is set")
+            XCTAssertTrue(context.function.contains("test_nonEmpty_errorDuringConditionCheck_whenInputThrows"))
+            guard
+                case TestError.brokenCondition = nestedError
+            else
+            {
+                return XCTFail("Unexpected nested error")
+            }
+        }
+    }
+
+    func test_nonEmpty_unsatisfiedCondition_customContext()
+    {
+        let value: Int? = nil
+
+        XCTAssertThrowsError(
+            try Check.nonEmpty(
+                file: "CustomFile.swift",
+                line: 77,
+                function: "customFunction()",
+                "Value is set"
+            ) { value }
+        )
+        { error in
+            guard
+                case let FailedCheck.unsatisfiedNonEmptyCondition(desc, context) = error
+            else
+            {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(desc, "Value is set")
+            XCTAssertEqual(context.file, "CustomFile.swift")
+            XCTAssertEqual(context.line, 77)
+            XCTAssertEqual(context.function, "customFunction()")
+        }
+    }
+
+    func test_aliases_requireAndCondition()
+    {
+        let require: Require<Int> = Require("Non-zero value") { $0 != 0 }
+        let condition: Condition<Int> = Condition("Positive value") { $0 > 0 }
+
+        XCTAssertTrue(require.isValid(1))
+        XCTAssertFalse(condition.isValid(0))
     }
 }
