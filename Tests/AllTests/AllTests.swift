@@ -44,7 +44,13 @@ class AllTests: XCTestCase
             }
 
             XCTAssertEqual(unsatisfiedRequirement.description, "Non-zero value")
-            XCTAssert(unsatisfiedRequirement.input as! Int == value)
+            guard
+                let actualInput = unsatisfiedRequirement.input as? Int
+            else
+            {
+                return XCTFail("Unexpected input type")
+            }
+            XCTAssertEqual(actualInput, value)
             XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
         }
     }
