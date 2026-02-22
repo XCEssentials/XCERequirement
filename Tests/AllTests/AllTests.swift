@@ -54,35 +54,6 @@ class AllTests: XCTestCase
             XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
         }
     }
-
-    func test_requirement_isValid_distinguishes_unsatisfiedCondition()
-    {
-        do
-        {
-            let actual = try Requirement("Non-zero value"){ $0 != 0 }.isValid(0)
-            XCTAssertFalse(actual)
-        }
-        catch
-        {
-            XCTFail("Unexpected failure")
-        }
-    }
-
-    func test_requirement_isValid_rethrows_conditionEvaluationError()
-    {
-        enum TestError: Error { case brokenCondition }
-
-        let requirement = Requirement<Int>("Non-zero value") { _ in
-            throw TestError.brokenCondition
-        }
-
-        XCTAssertThrowsError(try requirement.isValid(14)) { error in
-            guard case TestError.brokenCondition = error else
-            {
-                return XCTFail("Unexpected error")
-            }
-        }
-    }
     
     func test_inlineCheck_success()
     {

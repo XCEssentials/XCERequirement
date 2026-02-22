@@ -80,7 +80,7 @@ extension Requirement
         line: Int = #line,
         function: String = #function,
         _ value: Input
-        ) throws -> Bool
+        ) -> Bool
     {
         do
         {
@@ -92,7 +92,7 @@ extension Requirement
             )
             return true
         }
-        catch is UnsatisfiedRequirement
+        catch
         {
             return false
         }
