@@ -1,86 +1,92 @@
 # Suggestions for the next major release
 
-Reviewed on 2026-08-08 against the current repository and Swift 6.2.4. The
-existing 14 XCTest tests pass. Swift 6.3 is the latest stable Swift release;
-Swift 6.4 has been announced but is not yet a stable release, so it should not
-be the release baseline.
+Reviewed on 2026-08-09 against the current repository with Apple Swift 6.2.4.
+All 15 XCTest tests pass. Swift 6.3 is the latest stable Swift release; Swift
+6.4 has been announced but is not yet stable, so it should not be the release
+baseline.
 
-## Recommended release direction
+## Recommended direction
 
-Keep the library small and dependency-free, but use the major version to make
-its error model, concurrency contract, and naming coherent. A good target is:
+Keep the core library small and dependency-free. Use the next major release to
+settle the failure model, concurrency contract, source diagnostics, and naming
+before adding DSL syntax. The recommended baseline and sequence are:
 
-- require Swift 6.0 and compile the target in Swift 6 language mode;
-- keep compatibility testing on the oldest supported toolchain (6.0), then add
-  current stable Swift (currently 6.3) on macOS and Linux;
-- make source locations and errors first-class value types;
-- separate a nonthrowing predicate from a throwing evaluation, or clearly model
-  the distinction in the result/error API;
-- add small composition and `callAsFunction` conveniences before considering a
-  large result-builder DSL.
+- retain Swift tools 6.0 and Swift 6 language mode;
+- support the oldest toolchain promised by the package and test it alongside
+  the latest stable Swift release;
+- make requirements genuinely safe to transfer between concurrency domains;
+- replace repeated source parameters with a first-class source-location value;
+- add ordinary composition and batch-validation APIs before a result builder;
+- keep macros and property wrappers outside the core unless concrete client
+  use cases justify their semantics and maintenance cost.
 
-## P0 — settle before releasing
+## P0 — settle before release
 
-### 1. Keep Swift 6 language mode enabled
+### 1. Retain Swift 6 language mode
 
-The package now requires Swift tools version 6.0 and explicitly compiles in
-Swift 6 language mode. Keep both settings in place for the next major release:
+The manifest already requires Swift tools 6.0 and uses
+`swiftLanguageModes: [.v6]`. Keep both settings. Build with warnings treated as
+errors and test debug and release configurations. Do not raise the baseline to
+Swift 6.3 merely to use a new feature unless that feature materially improves
+the public API.
+
+### 2. Finalize predicate and failure semantics
+
+The current design already uses typed throws:
 
 ```swift
-// swift-tools-version: 6.0
+public typealias Body = (T) throws(E) -> Bool
 
-let package = Package(
-    name: "XCERequirement",
-    // ...
-    swiftLanguageModes: [.v6]
-)
+public func validate(_ value: T) throws(RequirementError<T, E>)
 ```
 
-Build with warnings treated as errors in CI and run both debug and release
-builds. The official [Swift 6 migration guide](https://www.swift.org/migration/)
-explains that Swift 6 mode enables required data-race checks and is opt-in per
-target. If an intermediate 5.x release is desired first, enable complete
-strict-concurrency checking there and fix warnings before changing the language
-mode, following the guide's [migration strategy](https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/migrationstrategy/).
+`validate` distinguishes an unsatisfied predicate from a predicate that could
+not be evaluated by wrapping both in `RequirementError`. By contrast,
+`isValid` converts either failure into `false`. Decide whether that information
+loss should remain part of the public contract.
 
-### 2. Define the predicate failure semantics
+Recommended options, in preference order:
 
-`Requirement.Body` is `(Input) throws -> Bool`, but the public operations give
-three different interpretations:
+1. Rename the Boolean operation to `isSatisfied(by:)` and restrict it to
+   `E == Never`, so it cannot hide evaluation failures.
+2. Keep throwing predicates and offer an explicit `evaluate(_:)` returning a
+   typed result for callers that prefer value-based handling.
+3. If `isValid` remains available for throwing predicates, document prominently
+   that both failure modes become `false` and deprecate it in favor of a name
+   that signals lossy evaluation.
 
-- `validate` propagates an evaluation error unchanged;
-- `isValid` catches every error and returns `false`, making “not satisfied” and
-  “could not evaluate” indistinguishable;
-- `Check.that` wraps evaluation errors in `FailedCheck`.
+Avoid splitting the library into separate throwing and nonthrowing requirement
+types unless prototypes show clearly better type inference and call sites. The
+existing `Requirement<T, E>` and `RequirementError<T, E>` already preserve the
+concrete evaluation error.
 
-This is the largest API ambiguity in the package. Choose and document one model.
-The clearest major-version design is to make ordinary `Requirement` predicates
-nonthrowing and offer an explicitly named throwing/evaluated variant. A smaller
-change is to add `evaluate(_:) -> Result<Void, RequirementError>` and make
-`isSatisfied(by:)` nonthrowing only when its predicate is nonthrowing. Avoid a
-Boolean API that silently converts arbitrary failures to `false`.
+### 3. Make the concurrency contract real
 
-Typed throws (SE-0413, available in Swift 6) can improve exhaustive handling,
-but only if the predicate's failure type is represented in the generic model.
-Do not merely declare `throws(UnsatisfiedRequirement)`: the stored closure can
-currently throw any error. A possible, deliberately explicit shape is:
+`T` is constrained to `Sendable`, but the stored closure is not `@Sendable`, so
+`Requirement` itself cannot safely cross task or actor boundaries. For the major
+release, prototype and source-impact-test:
 
 ```swift
-public enum RequirementError<Input, EvaluationFailure: Error>: Error {
-    case unsatisfied(input: Input, source: SourceLocation)
-    case evaluationFailed(EvaluationFailure, source: SourceLocation)
+public struct Requirement<T: Sendable, E: Error>: Sendable {
+    public typealias Body = @Sendable (T) throws(E) -> Bool
+    // ...
 }
 ```
 
-This is more type-safe but adds a second generic parameter, so prototype it and
-compare call-site ergonomics before committing. Untyped `throws` plus a stable
-wrapper error is preferable to a cumbersome public type.
+This is intentionally source-breaking for predicates that capture mutable or
+non-`Sendable` state. Do not use `@unchecked Sendable`. Keep the core
+nonisolated: synchronous general-purpose validation should not inherit
+`@MainActor` or require executor switching.
 
-### 3. Replace context tuples with a source-location value
+Also decide whether errors themselves must be `Sendable`. That may require
+`E: Error & Sendable`; do not impose that constraint unless failures genuinely
+need to cross concurrency boundaries.
 
-The same `(file: String, line: Int, function: String)` tuple is repeated in both
-error types. Tuples cannot gain useful conformances and the current `#file`
-default exposes full build-machine paths. Introduce one public type:
+### 4. Make source location a first-class value
+
+Every entry point currently repeats `file`, `line`, and `function`, even though
+`RequirementContext` already groups those values after a failure occurs.
+Replace those parameters with a value that supplies its own call-site defaults:
 
 ```swift
 public struct SourceLocation: Sendable, Hashable, Codable {
@@ -96,54 +102,35 @@ public struct SourceLocation: Sendable, Hashable, Codable {
 }
 ```
 
-Then accept `source: SourceLocation = .init()` at API boundaries. This shortens
-every signature, makes diagnostics testable/serializable, and avoids leaking
-absolute paths. If full paths are genuinely required, expose a separately named
-opt-in initializer using `#filePath`.
+Then accept `source: SourceLocation = .init()` at public boundaries. Prefer
+`#fileID` to the current `#file` so diagnostics do not expose absolute build
+paths. If full paths are required, make `#filePath` an explicitly named opt-in.
+Either rename `RequirementContext` to `SourceLocation` or evolve the existing
+type; do not keep two overlapping public types.
 
-### 4. Redesign errors as useful diagnostics
+### 5. Make errors useful diagnostics
 
-- Give `UnsatisfiedRequirement` and `FailedCheck` `CustomStringConvertible`
-  and `LocalizedError` conformances so `print(error)` and UI presentation match
-  the README's promise.
-- Prefer a consistent case vocabulary such as `unsatisfied` and
-  `evaluationFailed`; `unsatisfiedNonEmptyCondition` is overly specialized.
-- Consider one `RequirementFailure<Input>` rather than storing `input: Any`.
-  `Any` forces casts, erases type safety, blocks useful `Sendable` conformance,
-  and may retain or log sensitive input. If a non-generic error is important,
-  store an optional redacted/debug snapshot instead and let callers opt in.
-- Decide and test whether nested errors remain available as `underlyingError`.
-- Add explicit public initializers where users are expected to construct these
-  values; do not rely on internal synthesized memberwise initializers.
+The current generic enum preserves both the rejected input and concrete nested
+error, which is a strong basis. Improve it by:
 
-### 5. Make the concurrency contract explicit
+- adding `CustomStringConvertible` and `LocalizedError` where the resulting
+  messages are stable and useful;
+- defining whether nested failures are exposed as `underlyingError`;
+- adding `Equatable`, `Hashable`, `Codable`, and `Sendable` only conditionally
+  where their generic payloads support those conformances;
+- deciding whether retaining the complete rejected input creates privacy,
+  memory, or logging risks, and documenting redaction expectations;
+- keeping the case vocabulary consistently `unsatisfied` and
+  `evaluationFailed`.
 
-`Requirement` is an immutable value but stores an unconstrained escaping
-closure, so it is not safely transferable between tasks. For a Swift 6-native
-API, consider:
+Do not promise localization-ready GUI errors until localization and redaction
+semantics are designed.
 
-```swift
-public typealias Body = @Sendable (Input) throws -> Bool
-public struct Requirement<Input>: Sendable { /* ... */ }
-```
+## P1 — API clarity and developer experience
 
-This is source-breaking because captured mutable/non-`Sendable` state will no
-longer compile—which is appropriate to assess in a major release. Do not use
-`@unchecked Sendable`. Also make source locations and any redesigned failures
-`Sendable` where their stored values permit it. The underlying rules are
-described by [SE-0302](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0302-concurrent-value-and-concurrent-closures.md).
+### 6. Adopt names that read naturally
 
-This library should remain nonisolated rather than adopt Swift 6.2's optional
-main-actor default: validation is general-purpose, synchronous work and must be
-usable from any actor. Swift 6.2's approachable-concurrency changes are useful
-for applications, but default main-actor isolation would be harmful here; see
-the [Swift 6.2 release notes](https://www.swift.org/blog/swift-6.2-released/).
-
-## P1 — improve API clarity and developer experience
-
-### 6. Use names that read naturally
-
-Suggested surface:
+A possible surface is:
 
 ```swift
 requirement.isSatisfied(by: value)
@@ -152,211 +139,251 @@ try Check.require(value > 0, "Value must be positive")
 let value = try Check.unwrap(optional, "Value must exist")
 ```
 
-- Rename `isValid` to `isSatisfied(by:)`: the requirement is not what becomes
-  valid; an input satisfies it.
-- Rename `Check.that` to `require` (or keep `that` as a deprecated forwarding
-  overload for one release).
-- Rename `nonEmpty` to `unwrap` or `nonNil`. “Empty” normally also describes an
-  empty collection/string, while this function checks only `Optional.none`.
-- Put the value/expression first and the prose second where it improves trailing
-  closure and autocomplete behavior.
-- Use `@autoclosure` for the simple Boolean/optional overloads so evaluation
-  remains lazy without braces; retain closure overloads for throwing work.
+- Rename `isValid` to `isSatisfied(by:)`.
+- Consider renaming `Check.that` to `require`.
+- Separate `nonNil`/`unwrap` from a true collection `nonEmpty` operation. The
+  current overload family uses “non-empty” for both non-`nil` optionals and
+  non-empty collections.
+- Consider `@autoclosure` for simple Boolean and optional expressions so they
+  remain lazy without braces; retain explicit closure overloads for throwing
+  evaluation.
+- Put values, descriptions, and trailing closures in an order that behaves well
+  in autocomplete and reads consistently across all overloads.
 
-Use `@available(*, deprecated, renamed: ...)` shims and include a migration
-table in the release notes.
+Use deprecated forwarding overloads and provide a migration table.
 
-### 7. Make a requirement callable
+### 7. Add `callAsFunction`
 
-`callAsFunction` is a small, idiomatic way to reduce ceremony without inventing
-a DSL:
+This is a small convenience that fits the abstraction:
 
 ```swift
-public func callAsFunction(_ input: Input) throws {
-    try validate(input)
+public func callAsFunction(
+    _ value: T
+) throws(RequirementError<T, E>) {
+    try validate(value)
 }
 
 try isAdult(user)
 ```
 
-If both Boolean and throwing call forms are desirable, do not overload solely
-by return type. Pick one behavior for `callAsFunction`; keep the other explicitly
-named.
+Choose one callable meaning, preferably throwing validation. Do not create
+Boolean and throwing forms that differ only by contextual return type.
 
 ### 8. Add principled composition
 
-The README currently says requirements containing AND/OR “should” be split,
-but splitting and composing are complementary. Add named combinators first:
+Splitting requirements and composing them are complementary. Start with named
+combinators rather than operators:
 
 ```swift
 let eligible = isAdult.and(hasConsent)
 let recognized = isEmail.or(isPhoneNumber)
-let forbidden = isBlocked.negated()
+let permitted = isBlocked.negated()
 ```
 
-Define short-circuiting, thrown-error propagation, description formatting, and
-source-location behavior. Operators (`&&`, `||`, prefix `!`) can be added later
-only if they remain obvious in documentation and diagnostics.
+Specify and test:
 
-### 9. Add collections of requirements before a result-builder DSL
+- short-circuiting;
+- which evaluation error wins;
+- composite description formatting;
+- source-location propagation;
+- whether composed requirements require identical `T` and `E` types.
 
-An additive batch API gives most of the declarative benefit with little magic:
+Only consider `&&`, `||`, and prefix `!` after the named API proves clear.
+
+### 9. Add batch validation before result-builder syntax
+
+Create an ordinary `Requirements<T, E>` collection or equivalent API first:
 
 ```swift
 let failures = requirements.failures(for: user)
 try requirements.validateAll(user)
 ```
 
-Specify fail-fast versus accumulation explicitly and preserve each requirement's
-description. A result builder could then be a thin syntax layer:
+Settle fail-fast versus accumulated validation, ordering, evaluation-error
+handling, and failure representation. Consider providing explicitly named
+operations for both fail-fast and accumulation instead of one configurable
+method.
+
+After those semantics are stable, a result builder (sometimes called a content
+builder) can be a useful thin syntax layer:
 
 ```swift
-let accountRules = Requirements<Account> {
+let accountRules = Requirements<Account, Never> {
     Requirement("Email is present") { !$0.email.isEmpty }
+
     if requiresConsent {
         Requirement("Consent is granted") { $0.hasConsent }
     }
 }
 ```
 
-Only add this after the underlying collection/reporting model is stable. For a
-library this small, a macro dependency would materially increase build time and
-maintenance; result builders require no plugin and are the better first choice.
+The builder should only construct the collection; it should not define hidden
+validation behavior.
 
-### 10. Add concise factories for common predicates
+### 10. Add focused factories for common predicates
 
-Key-path and `Comparable` helpers can make definitions declarative while staying
-strongly typed, for example `Requirement.equals(\.status, .active, description:)`,
-`.nonNil(\.owner)`, and `.contains(\.roles, .admin)`. Keep the core generic and
-add only helpers backed by repeated real-world call sites. Avoid a broad catalog
-that duplicates the standard library.
+Key-path and `Comparable` helpers could reduce repetition while remaining
+strongly typed, for example:
 
-## P1 — package quality and CI
+```swift
+Requirement.equals(\.status, .active, description: "Account is active")
+Requirement.nonNil(\.owner, description: "Owner exists")
+Requirement.contains(\.roles, .admin, description: "User is an admin")
+```
 
-### 11. Expand the test strategy
+Add only factories supported by repeated real client code. Avoid recreating a
+large validation framework or duplicating standard-library algorithms.
 
-- Migrate to Swift Testing for parameterized cases and clearer `#expect`/
-  `#require` diagnostics, or run it alongside XCTest while Swift 6.0 is the
-  minimum. Swift 6.3 adds further Swift Testing improvements, summarized in the
-  [Swift 6.3 release notes](https://www.swift.org/blog/swift-6.3-released/).
-- Test exact source propagation for every public entry point, underlying thrown
-  errors, default descriptions, all composition truth tables, short-circuiting,
-  and concurrency/sendability compile checks.
-- Rename `test_nonEmpty_successs` and use consistent modern test names.
-- Add a small executable/fixture client compiled in Swift 6 mode. Tests inside
-  the package do not catch every public-access or external type-inference issue.
-- Run `swift test --parallel`, `swift build -c release`, and a warning-free Swift
-  6 build in CI.
-- Generate coverage and establish a sensible threshold for this tiny package.
+## Features to defer or avoid
 
-### 12. Correct and broaden the CI matrix
+### 11. Keep macros optional and outside the core
 
-The current matrix labels Swift versions independently of the runner but relies
-on a setup action to make every combination work. For the release:
+The plausible macro is an expression macro such as:
 
-- test the minimum Swift 6.0 toolchain and latest stable Swift 6.3;
-- retain macOS and Ubuntu, and consider Windows because the package uses only
-  the standard library;
-- add an Apple-platform build matrix for iOS, tvOS, watchOS, and visionOS if the
-  README continues claiming Apple-platform support;
-- pin third-party actions to commit SHAs for supply-chain hardening;
-- add concurrency sanitizer/Thread Sanitizer coverage only if asynchronous or
-  shared-state functionality is introduced.
+```swift
+#require(user.age >= 18)
+```
 
-Swift 6.3 also ships an official Android SDK, but do not claim Android support
-until it is built in CI. The package is a plausible candidate because it has no
-Foundation or Apple-framework dependency.
+It could capture expression spelling and source location automatically, but
+source spelling is usually inferior to the human-facing description central to
+this library. A macro also introduces compiler-plugin implementation and test
+targets and increases build and maintenance cost.
 
-### 13. Decide platform policy explicitly
+Do not add a macro to the core product now. If real demand emerges, expose a
+separate optional `XCERequirementMacros` product while keeping every operation
+available through the normal API.
 
-`Package.swift` declares no minimum platforms, while the badge claims macOS,
-iOS, tvOS, watchOS, and Linux. Either keep the package platform-agnostic and
-state “platforms supported by the tested Swift toolchains,” or declare minimum
-Apple versions and test them. Also add visionOS, Windows, Android, or WebAssembly
-only after verification. Avoid unnecessary minimum-version declarations: the
-current standard-library-only implementation has no deployment-sensitive API.
+### 12. Do not use property wrappers in the core
 
-### 14. Add release engineering basics
+An API such as `@Validated(by: .positive) var count` leaves essential behavior
+unclear because property setters cannot naturally throw. Rejecting, trapping,
+ignoring, or storing an invalid assignment would all be surprising in different
+contexts, and initialization and mutation need different handling.
 
-- Add `CHANGELOG.md` with a migration section for source-breaking changes.
-- Add a DocC catalog and documentation comments for every public symbol;
-  validate documentation in CI.
-- Consider an API-digester/symbol-graph check so accidental public API breaks
-  are caught after the major release.
+Only consider a wrapper in a separate integration layer after defining explicit
+storage and failure semantics. Explicit validation is a better match for the
+core abstraction.
+
+### 13. Skip unrelated new language features
+
+- Parameter packs have no current heterogeneous variadic use case.
+- Noncopyable types, `Span`, `InlineArray`, and ownership modifiers solve no
+  demonstrated problem in this closure-based library.
+- Swift 6.3 `@c` and module selectors are irrelevant without a C boundary or
+  module-name collision.
+- Do not apply `@specialize`, `@inline(always)`, or implementation-visibility
+  attributes without benchmark evidence; predicate execution will usually
+  dominate validation overhead.
+- Do not adopt default main-actor isolation or `@concurrent` in the synchronous
+  core.
+
+## P1 — tests, CI, and package policy
+
+### 14. Expand the test strategy
+
+- Adopt Swift Testing, or run it alongside XCTest, for parameterized truth
+  tables and clearer `#expect`/`#require` diagnostics.
+- Test exact source propagation for every public entry point, nested errors,
+  default descriptions, composition truth tables, short-circuiting, batch
+  ordering, and sendability compile checks.
+- Rename `test_nonEmpty_successs` and group tests by public type.
+- Add a small external fixture client; in-package tests do not expose every
+  public-access and type-inference issue.
+- Run `swift test --parallel`, a release build, and warning-as-error builds.
+- Establish a sensible coverage target for this small package.
+
+### 15. Correct and broaden CI
+
+- Test minimum supported Swift 6.0 and latest stable Swift 6.3 on macOS and
+  Linux.
+- Consider Windows because the implementation uses only the standard library.
+- Build each Apple platform claimed by project documentation.
+- Pin third-party CI actions to commit SHAs.
+- Add sanitizer coverage only if asynchronous or shared-state behavior is
+  introduced.
+- Do not claim Android, Windows, WebAssembly, or other platforms until CI builds
+  and tests them.
+
+### 16. Make platform policy consistent
+
+The manifest currently declares macOS 12, while the README badge claims macOS,
+iOS, tvOS, watchOS, and Linux. A macOS-only platform declaration does not mean
+the package is restricted to macOS, but every claimed platform should have an
+explicit support policy and CI evidence. Either declare appropriate Apple
+minimum versions or state that support follows tested Swift toolchains. Avoid
+deployment minimums that are not required by the standard-library-only code.
+
+### 17. Add release-engineering safeguards
+
+- Add `CHANGELOG.md` with a migration section.
+- Add a DocC catalog and validate public documentation in CI.
+- Use API-digester or symbol-graph comparison after the major release to catch
+  accidental public API breaks.
 - Add `CONTRIBUTING.md`, a supported-Swift policy, and a release checklist.
-- If tags are distributed publicly, document semantic-versioning expectations.
+- Compile examples and at least one external fixture in CI.
 
 ## P2 — repository cleanup
 
-### 15. Modernize layout and formatting
+### 18. Modernize layout and formatting
 
-- Move sources to the conventional `Sources/XCERequirement/` and tests to
-  `Tests/XCERequirementTests/`; then remove custom `path` entries from the
-  manifest.
-- Rename `AllTests.swift` to files grouped by subject.
-- Adopt standard Swift formatting consistently. The current split declaration
-  modifiers and Allman-style braces create much more vertical noise than the
-  implementation warrants.
-- Replace the full MIT header in every source file with a concise SPDX identifier
-  such as `// SPDX-License-Identifier: MIT`, while retaining the root license.
-- Simplify the generated/legacy `.gitignore`; remove duplicated section labels,
-  old Xcode artifacts if no longer relevant, and the policy that ignores all
-  `.xcodeproj` files unless project generation is actually part of the workflow.
+- Move sources to `Sources/XCERequirement/` and tests to
+  `Tests/XCERequirementTests/`, then remove custom manifest paths.
+- Split `AllTests.swift` into files grouped by subject.
+- Adopt consistent standard Swift formatting; the current split modifiers and
+  vertical whitespace make the small implementation harder to scan.
+- Consider concise SPDX headers while retaining the root `LICENSE`.
+- Review `.gitignore` for obsolete generated-project and legacy Xcode entries.
 
-### 16. Fix documentation and site issues
+### 19. Keep documentation aligned with behavior
 
-The README contains many spelling/grammar errors (`programming languge`,
-`fullfilled`, `instace`, `consturctor`, `achived`, `thart`, `overwise`) and some
-awkward or misleading wording. Rewrite it around a short motivation, installation,
-core examples, failure semantics, concurrency guarantees, and composition.
+- Organize the README around installation, core examples, typed failure
+  semantics, concurrency guarantees, composition, and batch validation.
+- Keep the Swift badge and installation version aligned with the manifest.
+- Ensure every example compiles in CI.
+- Clarify that Swift throws errors, not exceptions.
+- Document the distinction between an unsatisfied condition and evaluation
+  failure wherever `isValid` or its replacement is introduced.
+- Retain the valid `jekyll-theme-cayman` configuration only if the Jekyll site
+  remains in use; otherwise replace it with DocC-based publishing.
 
-Also:
+### 20. Reconsider aliases
 
-- `_config.yml` specifies `jekyll-theme-caymanaa1dfd6`, which appears to be a
-  corrupted theme name; use `jekyll-theme-cayman` or remove the obsolete Jekyll
-  configuration in favor of DocC/GitHub Pages;
-- update the Swift badge and installation text only when the baseline changes;
-- ensure examples compile in CI;
-- clarify that Swift throws errors, not exceptions;
-- avoid promising GUI-ready human-facing errors until `LocalizedError` and
-  localization/redaction are designed.
+`Require` and `Condition` are exact aliases of `Requirement`. They add
+vocabulary without behavior and make API search less predictable. Prefer one
+canonical type unless client usage demonstrates that an alias materially
+improves readability. Deprecate removed aliases through forwarding typealiases;
+if `Condition` remains, consider whether it should have distinct semantics.
 
-### 17. Reconsider aliases
+## Swift feature decision table
 
-`Require` and `Condition` are exact aliases of `Requirement`; they add vocabulary
-without behavior and make search/documentation less predictable. For the major
-release, prefer one canonical type. Deprecate aliases if real clients do not
-demonstrate a readability benefit. If `Condition` is retained, give it distinct
-semantics rather than another spelling.
-
-## Swift 6 feature fit
-
-Use features because they strengthen this library's contract, not simply because
-they are new:
-
-| Feature | Recommendation | Reason |
+| Feature | Decision | Reason |
 | --- | --- | --- |
-| Swift 6 language mode / strict concurrency | Adopt now | Finds real closure-transfer and `Any` error-payload issues. |
-| `Sendable` and `@Sendable` | Adopt after source-impact review | Makes immutable requirements safe to share across tasks. |
-| Typed throws | Prototype | Excellent error precision, but risks an awkward extra generic parameter. |
-| Result builders | Consider after batch semantics | Can make suites declarative without a macro dependency. |
-| `callAsFunction` | Adopt | Small, stable, and concise. |
-| Parameter packs / pack iteration | Skip for now | There is no heterogeneous variadic API in the current design that needs them. |
-| Noncopyable types, `Span`, `InlineArray`, strict memory safety | Skip | The library has no ownership or low-level memory problem. |
-| Swift 6.2 default actor isolation / `@concurrent` | Do not use in core | Synchronous validation should not be tied to an executor or global actor. |
-| Swift 6.3 `@c`, module selectors, optimization attributes | Skip | No C boundary/name collision exists, and optimization annotations need benchmark evidence. |
-| Macros | Defer | Build/dependency cost is disproportionate; builders and factories cover the likely DSL. |
+| Swift 6 language mode | Keep | Already enabled and enforces the intended language contract. |
+| Typed throws | Keep and refine | Already provides precise predicate and validation failures. |
+| `Sendable` / `@Sendable` | Adopt after source-impact testing | Makes immutable requirements safe to transfer between tasks. |
+| `#fileID` source values | Adopt | Improves privacy and shortens repeated APIs. |
+| `callAsFunction` | Adopt | Small, idiomatic convenience with little maintenance cost. |
+| Result builders | Add after batch semantics | Useful declarative syntax once the underlying model is explicit. |
+| Macros | Defer to an optional product | Compiler-plugin cost is not justified by the current API. |
+| Property wrappers | Avoid in core | Throwing validation does not map cleanly to property mutation. |
+| Parameter packs | Skip | No heterogeneous variadic API requires them. |
+| Ownership/noncopyable features | Skip | No low-level lifetime or memory problem exists here. |
+| Swift 6.2 actor-isolation options | Avoid in core | Synchronous validation should remain executor-independent. |
+| Swift 6.3 C/module/optimization features | Skip for now | No matching use case or benchmark evidence exists. |
 
 ## Suggested implementation order
 
-1. Write short API decision records for predicate failures, input retention, and
-   fail-fast versus accumulated validation.
-2. Add a Swift 6 CI lane and resolve strict-concurrency diagnostics.
-3. Introduce `SourceLocation` and the new error model.
-4. Apply major-release renames/removals with migration shims where possible.
-5. Add `callAsFunction`, named combinators, and batch validation.
-6. Expand tests, DocC, CI platforms, and API compatibility checks.
-7. Clean layout, formatting, README, aliases, Jekyll configuration, and release
+1. Record decisions for lossy Boolean evaluation, input retention, sendable
+   failures, and fail-fast versus accumulated validation.
+2. Add minimum/current Swift CI lanes and warning-as-error builds.
+3. Introduce the source-location API and diagnostic error conformances.
+4. Apply `@Sendable` and `Sendable` after measuring source compatibility.
+5. Apply major-release renames with deprecated migration shims.
+6. Add `callAsFunction` and named combinators.
+7. Add batch validation, then consider a result builder.
+8. Expand Swift Testing coverage, DocC, external fixtures, platform CI, and API
+   compatibility checks.
+9. Clean up layout, formatting, aliases, README, site configuration, and release
    metadata.
-8. Tag a prerelease and compile at least one external fixture against it before
-   publishing the stable major version.
+10. Publish a prerelease and compile real or representative clients against it
+    before tagging the stable major version.
