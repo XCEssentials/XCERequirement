@@ -1,7 +1,7 @@
 [![GitHub License](https://img.shields.io/github/license/XCEssentials/Requirement.svg?longCache=true)](LICENSE)
 [![GitHub Tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg?longCache=true)](https://github.com/XCEssentials/Requirement/tags)
 [![Swift Package Manager Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?longCache=true)](Package.swift)
-[![Written in Swift](https://img.shields.io/badge/Swift-5.10%2B-orange.svg?longCache=true)](https://swift.org)
+[![Written in Swift](https://img.shields.io/badge/Swift-6.0%2B-orange.svg?longCache=true)](https://swift.org)
 [![Supported platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20Linux-blue.svg?longCache=true)](Package.swift)
 [![CI](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml/badge.svg)](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml)
 
@@ -35,7 +35,7 @@ Each requirement can be evaluated against a given data value (which can be an at
 
 ## How to install
 
-Install using [SwiftPM](https://swift.org/package-manager/). The package currently targets Swift tools version `5.10` and newer.
+Install using [SwiftPM](https://swift.org/package-manager/). The package requires Swift tools version `6.0` or newer and compiles in Swift 6 language mode.
 
 Add the package URL and a version requirement in Xcode, or add it to your
 `Package.swift`, then include `XCERequirement` in your target dependencies:

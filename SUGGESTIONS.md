@@ -21,13 +21,10 @@ its error model, concurrency contract, and naming coherent. A good target is:
 
 ## P0 — settle before releasing
 
-### 1. Actually opt into Swift 6 language mode
+### 1. Keep Swift 6 language mode enabled
 
-`// swift-tools-version: 5.10` only establishes the manifest/API baseline. Even
-when a Swift 6 compiler builds the package, the module remains in Swift 5
-language mode unless configured otherwise.
-
-For the next major release:
+The package now requires Swift tools version 6.0 and explicitly compiles in
+Swift 6 language mode. Keep both settings in place for the next major release:
 
 ```swift
 // swift-tools-version: 6.0
