@@ -24,15 +24,21 @@
  
  */
 
+/// An error produced while evaluating a ``Requirement`` or ``Check``.
 public enum RequirementError: Swift.Error {
-    /// The input did not satisfy a requirement or inline check.
+    /// The check completed normally, but its input did not satisfy the requirement.
+    ///
+    /// The associated `input` is type-erased so callers can inspect or log the
+    /// rejected value. It is `nil` when a `Check.nonEmpty` check receives `nil`.
     case unsatisfied(
         description: String,
         input: Any?,
         context: RequirementContext
     )
 
-    /// The requirement or inline check could not be evaluated.
+    /// The supplied closure threw before the requirement could be evaluated.
+    ///
+    /// The original error is preserved in the associated `error` value.
     case evaluationFailed(
         description: String,
         error: Error,

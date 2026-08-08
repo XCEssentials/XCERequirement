@@ -24,8 +24,23 @@
  
  */
 
+/// Namespace for one-off validations that throw structured requirement errors.
 public
 enum Check {
+    /// Evaluates and unwraps an optional value.
+    ///
+    /// Unlike the collection overload, this only requires a non-`nil` value.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable description. A type-based description
+    ///     is generated when this is omitted.
+    ///   - inputBody: A closure that produces the optional value.
+    /// - Returns: The unwrapped value.
+    /// - Throws: `RequirementError.unsatisfied` if the value is `nil`, or
+    ///   `RequirementError.evaluationFailed` if `inputBody` throws.
     @discardableResult
     public
     static
@@ -50,6 +65,18 @@ enum Check {
         )
     }
 
+    /// Evaluates and unwraps an optional collection, requiring it to be non-empty.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable description. A type-based description
+    ///     is generated when this is omitted.
+    ///   - inputBody: A closure that produces the optional collection.
+    /// - Returns: The unwrapped, non-empty collection.
+    /// - Throws: `RequirementError.unsatisfied` if the collection is `nil` or
+    ///   empty, or `RequirementError.evaluationFailed` if `inputBody` throws.
     @discardableResult
     public
     static
@@ -90,6 +117,15 @@ enum Check {
         return result
     }
 
+    /// Requires a Boolean value to be `true`.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable explanation of the condition.
+    ///   - input: The value to check.
+    /// - Throws: `RequirementError.unsatisfied` when `input` is `false`.
     public
     static
     func that(
@@ -109,6 +145,16 @@ enum Check {
         )
     }
 
+    /// Evaluates a Boolean condition and requires its result to be `true`.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable explanation of the condition.
+    ///   - inputBody: A closure that evaluates the condition.
+    /// - Throws: `RequirementError.unsatisfied` if the closure returns `false`,
+    ///   or `RequirementError.evaluationFailed` if it throws.
     public
     static
     func that(

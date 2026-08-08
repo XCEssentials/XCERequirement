@@ -24,13 +24,20 @@
  
  */
 
+/// A named, reusable predicate that validates values of `Input`.
+///
+/// A requirement keeps its human-readable ``description`` together with the
+/// code that evaluates it. A throwing predicate is reported as a structured
+/// ``RequirementError`` by ``validate(file:line:function:_:)``.
 public
 struct Requirement<Input>: CustomStringConvertible {
+    /// The closure used to evaluate an input value.
     public
     typealias Body = (Input) throws -> Bool
 
     // ---
 
+    /// A human-readable explanation of the condition an input must satisfy.
     public
     let description: String
 
@@ -39,6 +46,12 @@ struct Requirement<Input>: CustomStringConvertible {
 
     // MARK: - Initializers
 
+    /// Creates a requirement from a description and predicate.
+    ///
+    /// - Parameters:
+    ///   - description: A human-readable explanation of the requirement.
+    ///   - body: A predicate that returns `true` when its input satisfies the
+    ///     requirement. It may throw if evaluation cannot be completed.
     public
     init(
         _ description: String,
@@ -53,6 +66,18 @@ struct Requirement<Input>: CustomStringConvertible {
 
 public
 extension Requirement {
+    /// Returns whether a value satisfies this requirement.
+    ///
+    /// This returns `false` both when the predicate returns `false` and when it
+    /// throws. Use ``validate(file:line:function:_:)`` when that distinction is
+    /// needed.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded on failure. Defaults to the caller.
+    ///   - line: The source line recorded on failure. Defaults to the caller.
+    ///   - function: The function recorded on failure. Defaults to the caller.
+    ///   - value: The value to evaluate.
+    /// - Returns: `true` only when the predicate completes and returns `true`.
     func isValid(
         file: String = #file,
         line: Int = #line,
@@ -72,6 +97,16 @@ extension Requirement {
         }
     }
 
+    /// Validates a value or throws a structured ``RequirementError``.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - value: The value to evaluate.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when the predicate returns `false`, or `RequirementError.evaluationFailed`
+    ///   when the predicate throws.
     func validate(
         file: String = #file,
         line: Int = #line,

@@ -24,8 +24,10 @@
  
  */
 
+/// A concise spelling of ``Requirement`` for requirement declarations.
 public
 typealias Require = Requirement
 
+/// An alternative spelling of ``Requirement`` for condition-oriented APIs.
 public
 typealias Condition = Requirement
