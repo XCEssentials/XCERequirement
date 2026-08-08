@@ -25,40 +25,6 @@
  */
 
 public
-enum FailedCheck: Swift.Error
-{
-    case errorDuringConditionCheck(
-        description: String,
-        error: Error,
-        context: (
-            file: String,
-            line: Int,
-            function: String
-            )
-    )
-    
-    case unsatisfiedNonEmptyCondition(
-        description: String,
-        context: (
-            file: String,
-            line: Int,
-            function: String
-            )
-    )
-    
-    case unsatisfiedCondition(
-        description: String,
-        context: (
-            file: String,
-            line: Int,
-            function: String
-            )
-    )
-}
-
-//---
-
-public
 enum Check
 {
     @discardableResult
@@ -83,7 +49,7 @@ enum Check
         }
         catch
         {
-            throw FailedCheck.errorDuringConditionCheck(
+            throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
                 context: (
@@ -103,8 +69,9 @@ enum Check
         }
         else
         {
-            throw FailedCheck.unsatisfiedNonEmptyCondition(
+            throw RequirementError.unsatisfied(
                 description: description,
+                input: nil,
                 context: (
                     file,
                     line,
@@ -152,7 +119,7 @@ enum Check
         }
         catch
         {
-            throw FailedCheck.errorDuringConditionCheck(
+            throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
                 context: (
@@ -168,8 +135,9 @@ enum Check
         if
             !result
         {
-            throw FailedCheck.unsatisfiedCondition(
+            throw RequirementError.unsatisfied(
                 description: description,
+                input: result,
                 context: (
                     file,
                     line,

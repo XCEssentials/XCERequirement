@@ -27,7 +27,7 @@ class AllTests: XCTestCase
         }
     }
 
-    func test_requirement_validate_rethrowsConditionEvaluationError()
+    func test_requirement_validate_wrapsConditionEvaluationError()
     {
         enum TestError: Error { case brokenCondition }
 
@@ -37,10 +37,16 @@ class AllTests: XCTestCase
 
         XCTAssertThrowsError(try requirement.validate(14)) { error in
             guard
-                case TestError.brokenCondition = error
+                case let RequirementError.evaluationFailed(desc, nestedError, context) = error
             else
             {
                 return XCTFail("Unexpected error")
+            }
+
+            XCTAssertEqual(desc, "Any value")
+            XCTAssertTrue(context.function.contains("test_requirement_validate_wrapsConditionEvaluationError"))
+            guard case TestError.brokenCondition = nestedError else {
+                return XCTFail("Unexpected nested error")
             }
         }
     }
@@ -55,21 +61,21 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                let unsatisfiedRequirement = error as? UnsatisfiedRequirement
+                case let RequirementError.unsatisfied(desc, input, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
             }
 
-            XCTAssertEqual(unsatisfiedRequirement.description, "Non-zero value")
+            XCTAssertEqual(desc, "Non-zero value")
             guard
-                let actualInput = unsatisfiedRequirement.input as? Int
+                let actualInput = input as? Int
             else
             {
                 return XCTFail("Unexpected input type")
             }
             XCTAssertEqual(actualInput, value)
-            XCTAssertTrue(unsatisfiedRequirement.context.function.contains("test_requirement_unsatisfiedCondition"))
+            XCTAssertTrue(context.function.contains("test_requirement_unsatisfiedCondition"))
         }
     }
 
@@ -87,15 +93,15 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                let unsatisfiedRequirement = error as? UnsatisfiedRequirement
+                case let RequirementError.unsatisfied(_, _, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
             }
 
-            XCTAssertEqual(unsatisfiedRequirement.context.file, "CustomFile.swift")
-            XCTAssertEqual(unsatisfiedRequirement.context.line, 42)
-            XCTAssertEqual(unsatisfiedRequirement.context.function, "customFunction()")
+            XCTAssertEqual(context.file, "CustomFile.swift")
+            XCTAssertEqual(context.line, 42)
+            XCTAssertEqual(context.function, "customFunction()")
         }
     }
 
@@ -156,7 +162,7 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                case let FailedCheck.errorDuringConditionCheck(desc, nestedError, context) = error
+                case let RequirementError.evaluationFailed(desc, nestedError, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
@@ -183,13 +189,14 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                case let FailedCheck.unsatisfiedCondition(desc, context) = error
+                case let RequirementError.unsatisfied(desc, input, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
             }
 
             XCTAssertEqual(desc, "Non-zero value")
+            XCTAssertEqual(input as? Bool, false)
             XCTAssertTrue(context.function.contains("test_inlineCheck_unsatisfiedCondition"))
         }
     }
@@ -245,8 +252,9 @@ class AllTests: XCTestCase
         XCTAssertThrowsError(try Check.nonEmpty { value }) { error in
             switch error
             {
-                case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
+                case RequirementError.unsatisfied(let desc, let input, _):
                     XCTAssertEqual(desc, "Non-nil instance of type Swift.Int")
+                    XCTAssertNil(input)
                     
                 default:
                     XCTFail("Unexpected error type")
@@ -259,8 +267,9 @@ class AllTests: XCTestCase
         { error in
             switch error
             {
-                case FailedCheck.unsatisfiedNonEmptyCondition(let desc, _):
+                case RequirementError.unsatisfied(let desc, let input, _):
                     XCTAssertEqual(desc, "Custom check description")
+                    XCTAssertNil(input)
                     
                 default:
                     XCTFail("Unexpected error type")
@@ -279,7 +288,7 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                case let FailedCheck.errorDuringConditionCheck(desc, nestedError, context) = error
+                case let RequirementError.evaluationFailed(desc, nestedError, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
@@ -310,13 +319,14 @@ class AllTests: XCTestCase
         )
         { error in
             guard
-                case let FailedCheck.unsatisfiedNonEmptyCondition(desc, context) = error
+                case let RequirementError.unsatisfied(desc, input, context) = error
             else
             {
                 return XCTFail("Unexpected validation error")
             }
 
             XCTAssertEqual(desc, "Value is set")
+            XCTAssertNil(input)
             XCTAssertEqual(context.file, "CustomFile.swift")
             XCTAssertEqual(context.line, 77)
             XCTAssertEqual(context.function, "customFunction()")

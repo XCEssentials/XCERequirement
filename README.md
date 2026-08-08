@@ -94,19 +94,19 @@ do
 }
 catch
 {
-    print(error) // error is of 'UnsatisfiedRequirement' type
+    print(error) // error is of 'RequirementError' type
 }
 ```
 
-The `UnsatisfiedRequirement` data type has three parameters:
+The `RequirementError.unsatisfied` case has three parameters:
 
 - `let description: String` that contains description of the requirement;
-- `let input: Any` that contains exact input data value that has been evaluated and failed to fulfill the requirement.
+- `let input: Any?` that contains the input data value that failed to fulfill the requirement, when available.
 - `let context: (file: String, line: Int, function: String)` for source context.
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `FailedCheck` error when the check is not fulfilled.
+While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `RequirementError` when a check is not fulfilled or cannot be evaluated.
 
 When you have an `Optional` value or you have a function/closure that produces `Optional` value, and you need this value only if it's NOT `nil`, or throw an error otherwise:
 
@@ -150,8 +150,7 @@ try Check.that("Value is TRUE") {
 }
 ```
 
-`FailedCheck` has these cases:
+`RequirementError` has these cases:
 
-- `errorDuringConditionCheck(description:error:context:)`
-- `unsatisfiedNonEmptyCondition(description:context:)`
-- `unsatisfiedCondition(description:context:)`
+- `unsatisfied(description:input:context:)`
+- `evaluationFailed(description:error:context:)`

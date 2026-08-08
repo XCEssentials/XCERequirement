@@ -25,20 +25,29 @@
  */
 
 public
-struct UnsatisfiedRequirement: Swift.Error
+enum RequirementError: Swift.Error
 {
-    public
-    let description: String
-    
-    public
-    let input: Any
-    
-    public
-    let context: (
-        file: String,
-        line: Int,
-        function: String
+    /// The input did not satisfy a requirement or inline check.
+    case unsatisfied(
+        description: String,
+        input: Any?,
+        context: (
+            file: String,
+            line: Int,
+            function: String
         )
+    )
+
+    /// The requirement or inline check could not be evaluated.
+    case evaluationFailed(
+        description: String,
+        error: Error,
+        context: (
+            file: String,
+            line: Int,
+            function: String
+        )
+    )
 }
 
 //---
@@ -103,13 +112,32 @@ extension Requirement
         line: Int = #line,
         function: String = #function,
         _ value: Input
-        ) throws
+    ) throws
     {
+        let result: Bool
+
+        do
+        {
+            result = try body(value)
+        }
+        catch
+        {
+            throw RequirementError.evaluationFailed(
+                description: description,
+                error: error,
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+
         guard
-            try body(value)
+            result
         else
         {
-            throw UnsatisfiedRequirement(
+            throw RequirementError.unsatisfied(
                 description: description,
                 input: value,
                 context: (
