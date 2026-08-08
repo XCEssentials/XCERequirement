@@ -25,34 +25,6 @@
  */
 
 public
-enum RequirementError: Swift.Error
-{
-    /// The input did not satisfy a requirement or inline check.
-    case unsatisfied(
-        description: String,
-        input: Any?,
-        context: (
-            file: String,
-            line: Int,
-            function: String
-        )
-    )
-
-    /// The requirement or inline check could not be evaluated.
-    case evaluationFailed(
-        description: String,
-        error: Error,
-        context: (
-            file: String,
-            line: Int,
-            function: String
-        )
-    )
-}
-
-//---
-
-public
 struct Requirement<Input>: CustomStringConvertible
 {
     public
