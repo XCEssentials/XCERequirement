@@ -2,7 +2,7 @@
 [![GitHub Tag](https://img.shields.io/github/tag/XCEssentials/Requirement.svg?longCache=true)](https://github.com/XCEssentials/Requirement/tags)
 [![Swift Package Manager Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?longCache=true)](Package.swift)
 [![Written in Swift](https://img.shields.io/badge/Swift-6.0%2B-orange.svg?longCache=true)](https://swift.org)
-[![Supported platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20Linux-blue.svg?longCache=true)](Package.swift)
+[![Supported platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Mac%20Catalyst%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20visionOS%20%7C%20Linux-blue.svg?longCache=true)](Package.swift)
 [![CI](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml/badge.svg)](https://github.com/XCEssentials/Requirement/actions/workflows/ci.yml)
 
 # Requirement
