@@ -25,7 +25,7 @@
  */
 
 /// An error produced while evaluating a ``Requirement`` or ``Check``.
-public enum RequirementError: Swift.Error {
+public enum RequirementError<E: Error>: Error, @unchecked Sendable {
     /// The check completed normally, but its input did not satisfy the requirement.
     ///
     /// The associated `input` is type-erased so callers can inspect or log the
@@ -41,7 +41,7 @@ public enum RequirementError: Swift.Error {
     /// The original error is preserved in the associated `error` value.
     case evaluationFailed(
         description: String,
-        error: Error,
+        error: E,
         context: RequirementContext
     )
 }

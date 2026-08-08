@@ -44,13 +44,13 @@ enum Check {
     @discardableResult
     public
     static
-    func nonEmpty<T>(
+    func nonEmpty<T, E: Error>(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
-        _ inputBody: () throws -> T?
-    ) throws -> T {
+        _ inputBody: () throws(E) -> T?
+    ) throws(RequirementError<E>) -> T {
 
         let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
 
@@ -80,13 +80,13 @@ enum Check {
     @discardableResult
     public
     static
-    func nonEmpty<T: Collection>(
+    func nonEmpty<T: Collection, E: Error>(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
-        _ inputBody: () throws -> T?
-    ) throws -> T {
+        _ inputBody: () throws(E) -> T?
+    ) throws(RequirementError<E>) -> T {
 
         let description = description ?? "Non-empty instance of type \(String(reflecting: T.self))"
 
@@ -134,7 +134,7 @@ enum Check {
         function: String = #function,
         _ description: String,
         _ input: Bool
-    ) throws {
+    ) throws(RequirementError<Never>) {
 
         try Check.that(
             file: file,
@@ -157,13 +157,13 @@ enum Check {
     ///   or `RequirementError.evaluationFailed` if it throws.
     public
     static
-    func that(
+    func that<E: Error>(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ description: String,
-        _ inputBody: () throws -> Bool
-    ) throws {
+        _ inputBody: () throws(E) -> Bool
+    ) throws(RequirementError<E>) {
 
         let result: Bool
 
@@ -195,13 +195,13 @@ enum Check {
 private
 extension Check {
     static
-    func nonNil<T>(
+    func nonNil<T, E: Error>(
         file: String,
         line: Int,
         function: String,
         description: String,
-        _ inputBody: () throws -> T?
-    ) throws -> T {
+        _ inputBody: () throws(E) -> T?
+    ) throws(RequirementError<E>) -> T {
 
         let resultMaybe: T?
 

@@ -58,20 +58,20 @@ It's a small and very simple, yet powerful library.
 
 `Requirement` is the main data type that actually represents a single requirement. Note, that this is a `struct`, so once it's created, it works as a single atomic value.
 
-To define a requirement, create an instance of `Requirement`. Its initializer accepts two required parameters: a human-friendly description in the form of a `String`, and a closure that implements the formal representation. `Requirement` is generic; its `Input` type represents the value expected by the closure.
+To define a requirement, create an instance of `Requirement`. Its initializer accepts two required parameters: a human-friendly description in the form of a `String`, and a closure that implements the formal representation. `Requirement` is generic over both the value expected by the closure and its concrete error type. Use `Never` for predicates that cannot throw.
 
 ## How to use
 
 Here is an example of how to create a requirement that an integer must not equal zero.
 
 ```swift
-let r = Requirement<Int>("Non-zero") { $0 != 0 }
+let r = Requirement<Int, Never>("Non-zero") { $0 != 0 }
 ```
 
 The same can be achieved by using the helper type alias `Require`:
 
 ```swift
-let r = Require<Int>("Non-zero") { $0 != 0 }
+let r = Require<Int, Never>("Non-zero") { $0 != 0 }
 ```
 
 In the example above, we created an instance of `Requirement` that evaluates values of type `Int`. We pass a string as the first initializer argument and the predicate as a trailing closure. The closure is called with each value that needs to be checked.
@@ -109,7 +109,7 @@ do
 }
 catch
 {
-    print(error) // error is a RequirementError
+    print(error) // error is a RequirementError<Never>
 }
 ```
 
@@ -120,14 +120,14 @@ The `RequirementError.unsatisfied` case has three parameters:
 - `let context: RequirementContext` for source context.
 
 The context is populated from the call site by default. If the predicate itself
-throws, `validate` instead throws `RequirementError.evaluationFailed` and
-preserves the original error. Use `isValid` only when this distinction is
+throws, `validate` instead throws `RequirementError<E>.evaluationFailed`
+and preserves the concrete error type. Use `isValid` only when this distinction is
 unimportant, because it returns `false` for both an unsatisfied requirement and
 an evaluation failure.
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `RequirementError` when a check is not fulfilled or cannot be evaluated.
+While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `RequirementError<E>` when a check is not fulfilled or cannot be evaluated.
 
 When you have an `Optional` value or a function/closure that produces one, `Check.nonEmpty` returns its unwrapped value or throws when it is `nil`. If the value is a collection, it also throws when the collection is empty:
 

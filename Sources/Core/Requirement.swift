@@ -30,10 +30,10 @@
 /// code that evaluates it. A throwing predicate is reported as a structured
 /// ``RequirementError`` by ``validate(file:line:function:_:)``.
 public
-struct Requirement<Input>: CustomStringConvertible {
+struct Requirement<Input, E: Error>: CustomStringConvertible {
     /// The closure used to evaluate an input value.
     public
-    typealias Body = (Input) throws -> Bool
+    typealias Body = (Input) throws(E) -> Bool
 
     // ---
 
@@ -112,7 +112,7 @@ extension Requirement {
         line: Int = #line,
         function: String = #function,
         _ value: Input
-    ) throws {
+    ) throws(RequirementError<E>) {
         let result: Bool
 
         // ---
