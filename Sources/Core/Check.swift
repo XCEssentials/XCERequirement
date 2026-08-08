@@ -39,6 +39,8 @@ enum Check {
 
         let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
 
+        // ---
+
         return try nonNil(
             file: file,
             line: line,
@@ -60,6 +62,9 @@ enum Check {
     ) throws -> T {
 
         let description = description ?? "Non-empty instance of type \(String(reflecting: T.self))"
+
+        // ---
+
         let result: T = try nonNil(
             file: file,
             line: line,
@@ -67,6 +72,8 @@ enum Check {
             description: description,
             inputBody
         )
+
+        // ---
 
         guard
             !result.isEmpty
@@ -77,6 +84,8 @@ enum Check {
                 context: RequirementContext(file: file, line: line, function: function)
             )
         }
+
+        // ---
 
         return result
     }
@@ -113,6 +122,7 @@ enum Check {
         let result: Bool
 
         // ---
+
         do {
             result = try inputBody()
         } catch {

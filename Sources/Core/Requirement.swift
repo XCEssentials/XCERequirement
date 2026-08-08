@@ -43,7 +43,7 @@ struct Requirement<Input>: CustomStringConvertible {
     init(
         _ description: String,
         _ body: @escaping Body
-        ) {
+    ) {
         self.description = description
         self.body = body
     }
@@ -58,7 +58,7 @@ extension Requirement {
         line: Int = #line,
         function: String = #function,
         _ value: Input
-        ) -> Bool {
+    ) -> Bool {
         do {
             try validate(
                 file: file,
@@ -80,6 +80,8 @@ extension Requirement {
     ) throws {
         let result: Bool
 
+        // ---
+
         do {
             result = try body(value)
         } catch {
@@ -89,6 +91,8 @@ extension Requirement {
                 context: RequirementContext(file: file, line: line, function: function)
             )
         }
+
+        // ---
 
         guard
             result
