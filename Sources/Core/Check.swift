@@ -39,6 +39,64 @@ enum Check
     ) throws -> T {
         
         let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
+
+        return try nonNil(
+            file: file,
+            line: line,
+            function: function,
+            description: description,
+            inputBody
+        )
+    }
+
+    @discardableResult
+    public
+    static
+    func nonEmpty<T: Collection>(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String? = nil,
+        _ inputBody: () throws -> T?
+    ) throws -> T {
+
+        let description = description ?? "Non-empty instance of type \(String(reflecting: T.self))"
+        let result: T = try nonNil(
+            file: file,
+            line: line,
+            function: function,
+            description: description,
+            inputBody
+        )
+
+        guard
+            !result.isEmpty
+        else
+        {
+            throw RequirementError.unsatisfied(
+                description: description,
+                input: result,
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+
+        return result
+    }
+
+    private
+    static
+    func nonNil<T>(
+        file: String,
+        line: Int,
+        function: String,
+        description: String,
+        _ inputBody: () throws -> T?
+    ) throws -> T {
+
         let resultMaybe: T?
         
         //---

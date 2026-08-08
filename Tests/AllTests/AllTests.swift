@@ -277,6 +277,26 @@ class AllTests: XCTestCase
         }
     }
 
+    func test_nonEmpty_collection()
+    {
+        let populated: [Int]? = [1]
+        let empty: [Int]? = []
+
+        XCTAssertEqual(try Check.nonEmpty { populated }, [1])
+
+        XCTAssertThrowsError(try Check.nonEmpty { empty }) { error in
+            guard
+                case let RequirementError.unsatisfied(desc, input, _) = error
+            else
+            {
+                return XCTFail("Unexpected error type")
+            }
+
+            XCTAssertEqual(desc, "Non-empty instance of type Swift.Array<Swift.Int>")
+            XCTAssertEqual(input as? [Int], [])
+        }
+    }
+
     func test_nonEmpty_errorDuringConditionCheck_whenInputThrows()
     {
         enum TestError: Error { case brokenCondition }
