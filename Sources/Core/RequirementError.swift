@@ -25,14 +25,13 @@
  */
 
 /// An error produced while evaluating a ``Requirement`` or ``Check``.
-public enum RequirementError<E: Error>: Error, @unchecked Sendable {
+public enum RequirementError<T: Sendable, E: Error>: Error {
     /// The check completed normally, but its input did not satisfy the requirement.
     ///
-    /// The associated `input` is type-erased so callers can inspect or log the
-    /// rejected value. It is `nil` when a `Check.nonEmpty` check receives `nil`.
+    /// The associated `input` preserves the rejected value's concrete type.
     case unsatisfied(
         description: String,
-        input: Any?,
+        input: T,
         context: RequirementContext
     )
 

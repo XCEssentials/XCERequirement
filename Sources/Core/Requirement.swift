@@ -24,16 +24,16 @@
  
  */
 
-/// A named, reusable predicate that validates values of `Input`.
+/// A named, reusable predicate that validates values of `T`.
 ///
 /// A requirement keeps its human-readable ``description`` together with the
 /// code that evaluates it. A throwing predicate is reported as a structured
 /// ``RequirementError`` by ``validate(file:line:function:_:)``.
 public
-struct Requirement<Input, E: Error>: CustomStringConvertible {
+struct Requirement<T: Sendable, E: Error>: CustomStringConvertible {
     /// The closure used to evaluate an input value.
     public
-    typealias Body = (Input) throws(E) -> Bool
+    typealias Body = (T) throws(E) -> Bool
 
     // ---
 
@@ -82,7 +82,7 @@ extension Requirement {
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        _ value: Input
+        _ value: T
     ) -> Bool {
         do {
             try validate(
@@ -111,8 +111,8 @@ extension Requirement {
         file: String = #file,
         line: Int = #line,
         function: String = #function,
-        _ value: Input
-    ) throws(RequirementError<E>) {
+        _ value: T
+    ) throws(RequirementError<T, E>) {
         let result: Bool
 
         // ---

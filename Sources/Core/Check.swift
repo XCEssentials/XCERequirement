@@ -44,13 +44,13 @@ enum Check {
     @discardableResult
     public
     static
-    func nonEmpty<T, E: Error>(
+    func nonEmpty<T: Sendable, E: Error>(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
         _ inputBody: () throws(E) -> T?
-    ) throws(RequirementError<E>) -> T {
+    ) throws(RequirementError<T?, E>) -> T {
 
         let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
 
@@ -80,13 +80,13 @@ enum Check {
     @discardableResult
     public
     static
-    func nonEmpty<T: Collection, E: Error>(
+    func nonEmpty<T: Collection & Sendable, E: Error>(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
         _ inputBody: () throws(E) -> T?
-    ) throws(RequirementError<E>) -> T {
+    ) throws(RequirementError<T?, E>) -> T {
 
         let description = description ?? "Non-empty instance of type \(String(reflecting: T.self))"
 
@@ -134,7 +134,7 @@ enum Check {
         function: String = #function,
         _ description: String,
         _ input: Bool
-    ) throws(RequirementError<Never>) {
+    ) throws(RequirementError<Bool, Never>) {
 
         try Check.that(
             file: file,
@@ -163,7 +163,7 @@ enum Check {
         function: String = #function,
         _ description: String,
         _ inputBody: () throws(E) -> Bool
-    ) throws(RequirementError<E>) {
+    ) throws(RequirementError<Bool, E>) {
 
         let result: Bool
 
@@ -195,13 +195,13 @@ enum Check {
 private
 extension Check {
     static
-    func nonNil<T, E: Error>(
+    func nonNil<T: Sendable, E: Error>(
         file: String,
         line: Int,
         function: String,
         description: String,
         _ inputBody: () throws(E) -> T?
-    ) throws(RequirementError<E>) -> T {
+    ) throws(RequirementError<T?, E>) -> T {
 
         let resultMaybe: T?
 

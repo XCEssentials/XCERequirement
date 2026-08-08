@@ -13,7 +13,6 @@ import XCERequirement
 
 // ===
 
-// swiftlint:disable type_body_length
 class AllTests: XCTestCase {
     func test_requirement_success() {
         do {
@@ -63,12 +62,7 @@ class AllTests: XCTestCase {
             }
 
             XCTAssertEqual(desc, "Non-zero value")
-            guard
-                let actualInput = input as? Int
-            else {
-                return XCTFail("Unexpected input type")
-            }
-            XCTAssertEqual(actualInput, value)
+            XCTAssertEqual(input, value)
             XCTAssertTrue(context.function.contains("test_requirement_unsatisfiedCondition"))
         }
     }
@@ -173,7 +167,7 @@ class AllTests: XCTestCase {
             }
 
             XCTAssertEqual(desc, "Non-zero value")
-            XCTAssertEqual(input as? Bool, false)
+            XCTAssertEqual(input, false)
             XCTAssertTrue(context.function.contains("test_inlineCheck_unsatisfiedCondition"))
         }
     }
@@ -261,7 +255,7 @@ class AllTests: XCTestCase {
             }
 
             XCTAssertEqual(desc, "Non-empty instance of type Swift.Array<Swift.Int>")
-            XCTAssertEqual(input as? [Int], [])
+            XCTAssertEqual(input, [])
         }
     }
 
@@ -324,4 +318,3 @@ class AllTests: XCTestCase {
         XCTAssertFalse(condition.isValid(0))
     }
 }
-// swiftlint:enable type_body_length

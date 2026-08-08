@@ -26,8 +26,8 @@
 
 /// A concise spelling of ``Requirement`` for requirement declarations.
 public
-typealias Require<Input, E: Error> = Requirement<Input, E>
+typealias Require<T: Sendable, E: Error> = Requirement<T, E>
 
 /// An alternative spelling of ``Requirement`` for condition-oriented APIs.
 public
-typealias Condition<Input, E: Error> = Requirement<Input, E>
+typealias Condition<T: Sendable, E: Error> = Requirement<T, E>

@@ -29,7 +29,7 @@
 /// Validation APIs populate this value from `#file`, `#line`, and `#function`
 /// by default. Pass explicit values when validation is forwarded through a
 /// wrapper and the wrapper's caller should be reported instead.
-public struct RequirementContext {
+public struct RequirementContext: Sendable {
     /// The source file in which validation was requested.
     public let file: String
     /// The source line on which validation was requested.

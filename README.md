@@ -109,7 +109,7 @@ do
 }
 catch
 {
-    print(error) // error is a RequirementError<Never>
+    print(error) // error is a RequirementError<Int, Never>
 }
 ```
 
@@ -120,14 +120,14 @@ The `RequirementError.unsatisfied` case has three parameters:
 - `let context: RequirementContext` for source context.
 
 The context is populated from the call site by default. If the predicate itself
-throws, `validate` instead throws `RequirementError<E>.evaluationFailed`
+throws, `validate` instead throws `RequirementError<T, E>.evaluationFailed`
 and preserves the concrete error type. Use `isValid` only when this distinction is
 unimportant, because it returns `false` for both an unsatisfied requirement and
 an evaluation failure.
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a `RequirementError<E>` when a check is not fulfilled or cannot be evaluated.
+While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a typed `RequirementError<T, E>` when a check is not fulfilled or cannot be evaluated.
 
 When you have an `Optional` value or a function/closure that produces one, `Check.nonEmpty` returns its unwrapped value or throws when it is `nil`. If the value is a collection, it also throws when the collection is empty:
 
