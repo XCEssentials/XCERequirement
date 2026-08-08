@@ -24,7 +24,7 @@
  
  */
 
-/// A named, reusable predicate that validates values of `T`.
+/// A named, reusable predicate that validates `Sendable` values of `T`.
 ///
 /// A requirement keeps its human-readable ``description`` together with the
 /// code that evaluates it. A throwing predicate is reported as a structured
@@ -69,8 +69,8 @@ extension Requirement {
     /// Returns whether a value satisfies this requirement.
     ///
     /// This returns `false` both when the predicate returns `false` and when it
-    /// throws. Use ``validate(file:line:function:_:)`` when that distinction is
-    /// needed.
+    /// throws. Any thrown error is discarded. Use
+    /// ``validate(file:line:function:_:)`` when that distinction is needed.
     ///
     /// - Parameters:
     ///   - file: The source file recorded on failure. Defaults to the caller.
@@ -105,8 +105,9 @@ extension Requirement {
     ///   - function: The function recorded in an error. Defaults to the caller.
     ///   - value: The value to evaluate.
     /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
-    ///   when the predicate returns `false`, or `RequirementError.evaluationFailed`
-    ///   when the predicate throws.
+    ///   when the predicate returns `false`, or
+    ///   ``RequirementError/evaluationFailed(description:error:context:)`` when
+    ///   the predicate throws.
     func validate(
         file: String = #file,
         line: Int = #line,

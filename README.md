@@ -56,9 +56,9 @@ import XCERequirement
 
 It's a small and very simple, yet powerful library.
 
-`Requirement` is the main data type that actually represents a single requirement. Note, that this is a `struct`, so once it's created, it works as a single atomic value.
+`Requirement<T, E>` is the main data type that represents a single requirement. It is generic over a `Sendable` input type `T` and the predicate's concrete `Error` type `E`.
 
-To define a requirement, create an instance of `Requirement`. Its initializer accepts two required parameters: a human-friendly description in the form of a `String`, and a closure that implements the formal representation. `Requirement` is generic over both the value expected by the closure and its concrete error type. Use `Never` for predicates that cannot throw.
+To define a requirement, create an instance of `Requirement`. Its initializer accepts two required parameters: a human-friendly description in the form of a `String`, and a predicate that returns `true` for a valid value. The predicate may throw. Use `Never` as the error type for predicates that cannot throw.
 
 ## How to use
 
@@ -68,11 +68,13 @@ Here is an example of how to create a requirement that an integer must not equal
 let r = Requirement<Int, Never>("Non-zero") { $0 != 0 }
 ```
 
-The same can be achieved by using the helper type alias `Require`:
+The same can be achieved by using the `Require` type alias:
 
 ```swift
 let r = Require<Int, Never>("Non-zero") { $0 != 0 }
 ```
+
+`Condition<T, E>` is another alias of `Requirement<T, E>` for condition-oriented APIs.
 
 In the example above, we created an instance of `Requirement` that evaluates values of type `Int`. We pass a string as the first initializer argument and the predicate as a trailing closure. The closure is called with each value that needs to be checked.
 
@@ -81,21 +83,11 @@ Note that if a requirement contains phrases like **AND**, **OR**, or any other l
 When requirement is created, here is an example of how it might be used for checking potentially suitable values.
 
 ```swift
-if
-    r.isValid(14) // returns Bool
-{
-	// given value - 14 (Int) - fulfills the requirement
-
-	// r.description - the description that has been provided
-	// during requirement initialization
-	
+if r.isValid(14) { // returns Bool
+    // 14 fulfills the requirement.
     print("\(r.description) -> YES")
-}
-else
-{
-	// this code block will be executed,
-    // if 0 will be passed into r.isValid(...)
-	
+} else {
+    // This branch runs if the predicate returns false or throws.
     print("\(r.description) -> NO")
 }
 ```
@@ -113,69 +105,46 @@ catch
 }
 ```
 
-The `RequirementError.unsatisfied` case has three parameters:
+`validate` throws a `RequirementError<T, E>`. Its cases are:
 
-- `let description: String` that contains description of the requirement;
-- `let input: Any?` that contains the input data value that failed to fulfill the requirement, when available.
-- `let context: RequirementContext` for source context.
+- `unsatisfied(description: String, input: T, context: RequirementContext)` when the predicate returns `false`;
+- `evaluationFailed(description: String, error: E, context: RequirementContext)` when the predicate throws.
 
-The context is populated from the call site by default. If the predicate itself
-throws, `validate` instead throws `RequirementError<T, E>.evaluationFailed`
-and preserves the concrete error type. Use `isValid` only when this distinction is
-unimportant, because it returns `false` for both an unsatisfied requirement and
-an evaluation failure.
+The context contains the source file, line, and function and is populated from
+the call site by default. Each validation API also accepts explicit `file`,
+`line`, and `function` arguments for forwarding through wrappers. Use `isValid`
+only when the distinction between an unsatisfied requirement and an evaluation
+failure is unimportant, because it returns `false` for both.
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, there are several helpers that use the same idea but provide API that is more convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. These helpers are encapsulated into the `Check` enum. They throw a typed `RequirementError<T, E>` when a check is not fulfilled or cannot be evaluated.
+While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, the `Check` namespace provides APIs that are convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. They throw a typed `RequirementError<T, E>` when a check is not fulfilled or cannot be evaluated.
 
-When you have an `Optional` value or a function/closure that produces one, `Check.nonEmpty` returns its unwrapped value or throws when it is `nil`. If the value is a collection, it also throws when the collection is empty:
-
-```swift
-// the following expression will throw
-// if the value from closure is 'nil' or just return
-// the unwrapped value from the closure otherwise
-let nonNilValue = try Check.nonEmpty("Value is NOT nil") {
-	
-	// return here an optional value,
-	// it might be result of an expression 
-	// or an optional value captured from the outer scope
-}
-```
-
-Same as the above, but does not return anything. When you have an `Optional` value or you have a function/closure that produces `Optional` value, and you need to make sure that this value is NOT `nil`, or throw an error otherwise:
+`Check.nonEmpty` evaluates an optional-producing closure and returns its
+unwrapped value. It throws when the result is `nil`; if the value is a
+collection, the more specific overload also throws when it is empty. The
+description is optional and defaults to a message based on the value's type:
 
 ```swift
-// the following expression does not return anything,
-// it will throw if value IS 'nil'
-// or pass through silently otherwise
-try Check.nonEmpty("Value is NOT nil") {
-	
-	// return here an optional value,
-	// it might be result of an expression 
-	// or an optional value captured from the outer scope
-}
+let nonNilValue = try Check.nonEmpty("Value is not nil") { optionalValue }
+let nonEmptyValues = try Check.nonEmpty { optionalArray }
 ```
 
-When you have a `Bool` value or a function/closure that produces a `Bool`, and you want to continue only if it is `true`, or throw an error otherwise:
+The return value is marked `@discardableResult`, so the same API can be used
+only for validation:
 
 ```swift
-// the following expression does not return anything,
-// it will throw if value is 'false'
-// or pass through silently otherwise
-try Check.that("Value is TRUE") {
-	
-	// return here a boolean value,
-	// it might be result of an expression 
-	// or an boolean value captured from the outer scope
-}
+try Check.nonEmpty("Value is not nil") { optionalValue }
 ```
 
-`RequirementError` has these cases:
+`Check.that` accepts either a `Bool` value or a Boolean-producing closure and
+throws unless the result is `true`:
 
-- `unsatisfied(description:input:context:)`
-- `evaluationFailed(description:error:context:)`
+```swift
+try Check.that("Value is positive", value > 0)
+try Check.that("Remote value is available") { try fetchAvailability() }
+```
 
-Errors thrown by closures supplied to `Requirement`, `Check.that`, or
-`Check.nonEmpty` are wrapped by `evaluationFailed`; the original error remains
-available in its `error` associated value.
+Closures supplied to `Requirement`, `Check.that`, and `Check.nonEmpty` preserve
+their concrete thrown error type. Any thrown error is wrapped by
+`evaluationFailed` and remains available in its `error` associated value.

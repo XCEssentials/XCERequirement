@@ -24,7 +24,8 @@
  
  */
 
-/// Namespace for one-off validations that throw structured requirement errors.
+/// Namespace for one-off validations that throw structured ``RequirementError``
+/// values.
 public
 enum Check {
     /// Evaluates and unwraps an optional value.
@@ -39,8 +40,10 @@ enum Check {
     ///     is generated when this is omitted.
     ///   - inputBody: A closure that produces the optional value.
     /// - Returns: The unwrapped value.
-    /// - Throws: `RequirementError.unsatisfied` if the value is `nil`, or
-    ///   `RequirementError.evaluationFailed` if `inputBody` throws.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   if the value is `nil`, or
+    ///   ``RequirementError/evaluationFailed(description:error:context:)`` if
+    ///   `inputBody` throws.
     @discardableResult
     public
     static
@@ -75,8 +78,10 @@ enum Check {
     ///     is generated when this is omitted.
     ///   - inputBody: A closure that produces the optional collection.
     /// - Returns: The unwrapped, non-empty collection.
-    /// - Throws: `RequirementError.unsatisfied` if the collection is `nil` or
-    ///   empty, or `RequirementError.evaluationFailed` if `inputBody` throws.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   if the collection is `nil` or empty, or
+    ///   ``RequirementError/evaluationFailed(description:error:context:)`` if
+    ///   `inputBody` throws.
     @discardableResult
     public
     static
@@ -125,7 +130,9 @@ enum Check {
     ///   - function: The function recorded in an error. Defaults to the caller.
     ///   - description: A human-readable explanation of the condition.
     ///   - input: The value to check.
-    /// - Throws: `RequirementError.unsatisfied` when `input` is `false`.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when `input` is `false`. This overload cannot produce an evaluation
+    ///   failure.
     public
     static
     func that(
@@ -153,8 +160,10 @@ enum Check {
     ///   - function: The function recorded in an error. Defaults to the caller.
     ///   - description: A human-readable explanation of the condition.
     ///   - inputBody: A closure that evaluates the condition.
-    /// - Throws: `RequirementError.unsatisfied` if the closure returns `false`,
-    ///   or `RequirementError.evaluationFailed` if it throws.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   if the closure returns `false`, or
+    ///   ``RequirementError/evaluationFailed(description:error:context:)`` if
+    ///   it throws.
     public
     static
     func that<E: Error>(

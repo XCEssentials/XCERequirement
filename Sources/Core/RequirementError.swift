@@ -24,7 +24,10 @@
  
  */
 
-/// An error produced while evaluating a ``Requirement`` or ``Check``.
+/// An error produced while evaluating a ``Requirement`` or a ``Check`` API.
+///
+/// `T` is the checked input type and `E` is the concrete error type thrown by
+/// the supplied predicate or input closure.
 public enum RequirementError<T: Sendable, E: Error>: Error {
     /// The check completed normally, but its input did not satisfy the requirement.
     ///
