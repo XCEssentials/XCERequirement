@@ -25,12 +25,11 @@
  */
 
 public
-struct Requirement<Input>: CustomStringConvertible
-{
+struct Requirement<Input>: CustomStringConvertible {
     public
     typealias Body = (Input) throws -> Bool
 
-    //---
+    // ---
 
     public
     let description: String
@@ -44,8 +43,7 @@ struct Requirement<Input>: CustomStringConvertible
     init(
         _ description: String,
         _ body: @escaping Body
-        )
-    {
+        ) {
         self.description = description
         self.body = body
     }
@@ -54,17 +52,14 @@ struct Requirement<Input>: CustomStringConvertible
 // MARK: - Validation
 
 public
-extension Requirement
-{
+extension Requirement {
     func isValid(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ value: Input
-        ) -> Bool
-    {
-        do
-        {
+        ) -> Bool {
+        do {
             try validate(
                 file: file,
                 line: line,
@@ -72,51 +67,36 @@ extension Requirement
                 value
             )
             return true
-        }
-        catch
-        {
+        } catch {
             return false
         }
     }
-    
+
     func validate(
         file: String = #file,
         line: Int = #line,
         function: String = #function,
         _ value: Input
-    ) throws
-    {
+    ) throws {
         let result: Bool
 
-        do
-        {
+        do {
             result = try body(value)
-        }
-        catch
-        {
+        } catch {
             throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
 
         guard
             result
-        else
-        {
+        else {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: value,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
     }

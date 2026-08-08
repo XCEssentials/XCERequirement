@@ -25,8 +25,7 @@
  */
 
 public
-enum Check
-{
+enum Check {
     @discardableResult
     public
     static
@@ -37,7 +36,7 @@ enum Check
         _ description: String? = nil,
         _ inputBody: () throws -> T?
     ) throws -> T {
-        
+
         let description = description ?? "Non-nil instance of type \(String(reflecting: T.self))"
 
         return try nonNil(
@@ -71,16 +70,11 @@ enum Check
 
         guard
             !result.isEmpty
-        else
-        {
+        else {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: result,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
 
@@ -96,7 +90,7 @@ enum Check
         _ description: String,
         _ input: Bool
     ) throws {
-        
+
         try Check.that(
             file: file,
             line: line,
@@ -118,45 +112,32 @@ enum Check
 
         let result: Bool
 
-        //---
-        do
-        {
+        // ---
+        do {
             result = try inputBody()
-        }
-        catch
-        {
+        } catch {
             throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
-        
-        //---
-        
+
+        // ---
+
         if
-            !result
-        {
+            !result {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: result,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
     }
 }
 
 private
-extension Check
-{
+extension Check {
     static
     func nonNil<T>(
         file: String,
@@ -168,42 +149,28 @@ extension Check
 
         let resultMaybe: T?
 
-        //---
+        // ---
 
-        do
-        {
+        do {
             resultMaybe = try inputBody()
-        }
-        catch
-        {
+        } catch {
             throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
-        
-        //---
-        
+
+        // ---
+
         if
-            let result = resultMaybe
-        {
+            let result = resultMaybe {
             return result
-        }
-        else
-        {
+        } else {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: nil,
-                context: (
-                    file,
-                    line,
-                    function
-                )
+                context: RequirementContext(file: file, line: line, function: function)
             )
         }
     }
