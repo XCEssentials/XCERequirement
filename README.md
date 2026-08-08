@@ -42,7 +42,7 @@ Add the package URL and a version requirement in Xcode, or add it to your
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/XCEssentials/Requirement.git", from: "2.6.2")
+    .package(url: "https://github.com/XCEssentials/Requirement.git", from: "3.0.0")
 ]
 ```
 
