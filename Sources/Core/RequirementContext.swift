@@ -24,18 +24,14 @@
  
  */
 
-public enum RequirementError: Swift.Error {
-    /// The input did not satisfy a requirement or inline check.
-    case unsatisfied(
-        description: String,
-        input: Any?,
-        context: RequirementContext
-    )
+public struct RequirementContext {
+    public let file: String
+    public let line: Int
+    public let function: String
 
-    /// The requirement or inline check could not be evaluated.
-    case evaluationFailed(
-        description: String,
-        error: Error,
-        context: RequirementContext
-    )
+    public init(file: String, line: Int, function: String) {
+        self.file = file
+        self.line = line
+        self.function = function
+    }
 }
