@@ -87,7 +87,76 @@ enum Check
         return result
     }
 
-    private
+    public
+    static
+    func that(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String,
+        _ input: Bool
+    ) throws {
+        
+        try Check.that(
+            file: file,
+            line: line,
+            function: function,
+            description,
+            { input }
+        )
+    }
+
+    public
+    static
+    func that(
+        file: String = #file,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String,
+        _ inputBody: () throws -> Bool
+    ) throws {
+
+        let result: Bool
+
+        //---
+        do
+        {
+            result = try inputBody()
+        }
+        catch
+        {
+            throw RequirementError.evaluationFailed(
+                description: description,
+                error: error,
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+        
+        //---
+        
+        if
+            !result
+        {
+            throw RequirementError.unsatisfied(
+                description: description,
+                input: result,
+                context: (
+                    file,
+                    line,
+                    function
+                )
+            )
+        }
+    }
+}
+
+private
+extension Check
+{
     static
     func nonNil<T>(
         file: String,
@@ -98,9 +167,9 @@ enum Check
     ) throws -> T {
 
         let resultMaybe: T?
-        
+
         //---
-        
+
         do
         {
             resultMaybe = try inputBody()
@@ -130,72 +199,6 @@ enum Check
             throw RequirementError.unsatisfied(
                 description: description,
                 input: nil,
-                context: (
-                    file,
-                    line,
-                    function
-                )
-            )
-        }
-    }
-    
-    public
-    static
-    func that(
-        file: String = #file,
-        line: Int = #line,
-        function: String = #function,
-        _ description: String,
-        _ input: Bool
-    ) throws {
-        
-        try Check.that(
-            file: file,
-            line: line,
-            function: function,
-            description,
-            { input }
-        )
-    }
-    
-    public
-    static
-    func that(
-        file: String = #file,
-        line: Int = #line,
-        function: String = #function,
-        _ description: String,
-        _ inputBody: () throws -> Bool
-    ) throws {
-        
-        let result: Bool
-        
-        //---
-        do
-        {
-            result = try inputBody()
-        }
-        catch
-        {
-            throw RequirementError.evaluationFailed(
-                description: description,
-                error: error,
-                context: (
-                    file,
-                    line,
-                    function
-                )
-            )
-        }
-        
-        //---
-        
-        if
-            !result
-        {
-            throw RequirementError.unsatisfied(
-                description: description,
-                input: result,
                 context: (
                     file,
                     line,
