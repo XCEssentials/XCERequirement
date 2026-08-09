@@ -276,10 +276,10 @@ class AllTests: XCTestCase {
 
         do {
             _ = try Requirement.nonNil(
-                "Value is set",
                 file: "CustomFile.swift",
                 line: 77,
-                function: "customFunction()"
+                function: "customFunction()",
+                "Value is set"
             ) { value }
             XCTFail("Expected an error")
         } catch {

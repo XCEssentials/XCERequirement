@@ -32,11 +32,11 @@ extension Requirement where T == Never, E == Never {
     @discardableResult
     static
     func nonNil<Value: Sendable>(
-        _ input: @autoclosure () -> Value?,
-        _ description: String? = nil,
         file: String = #fileID,
         line: Int = #line,
-        function: String = #function
+        function: String = #function,
+        _ input: @autoclosure () -> Value?,
+        _ description: String? = nil
     ) throws(RequirementError<Value?, Never>) -> Value {
         try evaluateNonNil(
             description: description,
@@ -51,10 +51,10 @@ extension Requirement where T == Never, E == Never {
     @discardableResult
     static
     func nonNil<Value: Sendable, EvaluationError: Error>(
-        _ description: String? = nil,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
+        _ description: String? = nil,
         _ input: () throws(EvaluationError) -> Value?
     ) throws(RequirementError<Value?, EvaluationError>) -> Value {
         try evaluateNonNil(
@@ -69,11 +69,11 @@ extension Requirement where T == Never, E == Never {
     /// Lazily requires a Boolean expression to be `true`.
     static
     func that(
-        _ input: @autoclosure () -> Bool,
-        _ description: String,
         file: String = #fileID,
         line: Int = #line,
-        function: String = #function
+        function: String = #function,
+        _ input: @autoclosure () -> Bool,
+        _ description: String
     ) throws(RequirementError<Bool, Never>) {
         try evaluateThat(
             description: description,
@@ -87,10 +87,10 @@ extension Requirement where T == Never, E == Never {
     /// Requires a Boolean value produced by a throwing closure to be `true`.
     static
     func that<EvaluationError: Error>(
-        _ description: String,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
+        _ description: String,
         _ input: () throws(EvaluationError) -> Bool
     ) throws(RequirementError<Bool, EvaluationError>) {
         try evaluateThat(
