@@ -33,7 +33,7 @@ extension Requirement where T == Never, E == Never {
     static
     func nonNil<Value: Sendable>(
         _ input: @autoclosure () -> Value?,
-        description: String? = nil,
+        _ description: String? = nil,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function
@@ -51,7 +51,7 @@ extension Requirement where T == Never, E == Never {
     @discardableResult
     static
     func nonNil<Value: Sendable, EvaluationError: Error>(
-        description: String? = nil,
+        _ description: String? = nil,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -70,7 +70,7 @@ extension Requirement where T == Never, E == Never {
     static
     func that(
         _ input: @autoclosure () -> Bool,
-        description: String,
+        _ description: String,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function
@@ -87,7 +87,7 @@ extension Requirement where T == Never, E == Never {
     /// Requires a Boolean value produced by a throwing closure to be `true`.
     static
     func that<EvaluationError: Error>(
-        description: String,
+        _ description: String,
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,

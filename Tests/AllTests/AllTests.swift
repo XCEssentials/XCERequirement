@@ -113,7 +113,7 @@ class AllTests: XCTestCase {
         let value = 14
 
         do {
-            try Requirement.that(value != 0, description: "Non-zero value")
+            try Requirement.that(value != 0, "Non-zero value")
         } catch {
             XCTFail("Unexpected failure")
         }
@@ -133,7 +133,7 @@ class AllTests: XCTestCase {
         }
 
         do {
-            _ = try Requirement.that(description: "Non-zero value", condition)
+            _ = try Requirement.that("Non-zero value", condition)
             XCTFail("Expected an error")
         } catch {
             guard
@@ -157,7 +157,7 @@ class AllTests: XCTestCase {
         let value = 0
 
         do {
-            _ = try Requirement.that(value != 0, description: "Non-zero value")
+            _ = try Requirement.that(value != 0, "Non-zero value")
             XCTFail("Expected an error")
         } catch {
             guard
@@ -186,9 +186,9 @@ class AllTests: XCTestCase {
         }
 
         do {
-            try Requirement.nonNil(value, description: "Value is set")
+            try Requirement.nonNil(value, "Value is set")
 
-            let output: Int = try Requirement.nonNil(value, description: "Value is set")
+            let output: Int = try Requirement.nonNil(value, "Value is set")
 
             XCTAssertEqual(output, 1)
         } catch {
@@ -196,9 +196,9 @@ class AllTests: XCTestCase {
         }
 
         do {
-            try Requirement.nonNil(2, description: "Value is set")
+            try Requirement.nonNil(2, "Value is set")
 
-            let output: Int = try Requirement.nonNil(2, description: "Value is set")
+            let output: Int = try Requirement.nonNil(2, "Value is set")
 
             XCTAssertEqual(output, 2)
         } catch {
@@ -224,7 +224,7 @@ class AllTests: XCTestCase {
         }
 
         do {
-            _ = try Requirement.nonNil(value, description: "Custom check description")
+            _ = try Requirement.nonNil(value, "Custom check description")
             XCTFail("Expected an error")
         } catch {
             switch error {
@@ -250,7 +250,7 @@ class AllTests: XCTestCase {
         enum TestError: Error { case brokenCondition }
 
         do {
-            _ = try Requirement.nonNil(description: "Value is set") { () throws(TestError) -> Int? in
+            _ = try Requirement.nonNil("Value is set") { () throws(TestError) -> Int? in
                 throw TestError.brokenCondition
             }
             XCTFail("Expected an error")
@@ -276,7 +276,7 @@ class AllTests: XCTestCase {
 
         do {
             _ = try Requirement.nonNil(
-                description: "Value is set",
+                "Value is set",
                 file: "CustomFile.swift",
                 line: 77,
                 function: "customFunction()"
