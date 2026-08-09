@@ -113,7 +113,7 @@ class AllTests: XCTestCase {
         let value = 14
 
         do {
-            try Requirement.that(value != 0, "Non-zero value")
+            try Requirement.that("Non-zero value", value != 0)
         } catch {
             XCTFail("Unexpected failure")
         }
@@ -157,7 +157,7 @@ class AllTests: XCTestCase {
         let value = 0
 
         do {
-            _ = try Requirement.that(value != 0, "Non-zero value")
+            _ = try Requirement.that("Non-zero value", value != 0)
             XCTFail("Expected an error")
         } catch {
             guard
@@ -174,6 +174,9 @@ class AllTests: XCTestCase {
 
     func test_nonNil_success() {
         let value: Int? = 1
+        let text: String? = "value"
+
+        XCTAssertEqual(try Requirement.nonNil(text), "value")
 
         do {
             try Requirement.nonNil(value)
@@ -186,9 +189,9 @@ class AllTests: XCTestCase {
         }
 
         do {
-            try Requirement.nonNil(value, "Value is set")
+            try Requirement.nonNil("Value is set", value)
 
-            let output: Int = try Requirement.nonNil(value, "Value is set")
+            let output: Int = try Requirement.nonNil("Value is set", value)
 
             XCTAssertEqual(output, 1)
         } catch {
@@ -196,9 +199,9 @@ class AllTests: XCTestCase {
         }
 
         do {
-            try Requirement.nonNil(2, "Value is set")
+            try Requirement.nonNil("Value is set", 2)
 
-            let output: Int = try Requirement.nonNil(2, "Value is set")
+            let output: Int = try Requirement.nonNil("Value is set", 2)
 
             XCTAssertEqual(output, 2)
         } catch {
@@ -224,7 +227,7 @@ class AllTests: XCTestCase {
         }
 
         do {
-            _ = try Requirement.nonNil(value, "Custom check description")
+            _ = try Requirement.nonNil("Custom check description", value)
             XCTFail("Expected an error")
         } catch {
             switch error {

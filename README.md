@@ -129,7 +129,7 @@ unwrapped value. An empty collection is valid as long as it is non-`nil`. The
 description is optional and defaults to a message based on the value's type:
 
 ```swift
-let nonNilValue = try Requirement.nonNil(optionalValue, "Value is not nil")
+let nonNilValue = try Requirement.nonNil("Value is not nil", optionalValue)
 let values = try Requirement.nonNil(optionalArray)
 ```
 
@@ -137,14 +137,14 @@ The return value is marked `@discardableResult`, so the same API can be used
 only for validation:
 
 ```swift
-try Requirement.nonNil(optionalValue, "Value is not nil")
+try Requirement.nonNil("Value is not nil", optionalValue)
 ```
 
 `Requirement.that` accepts a lazy Boolean expression, while its closure
 overload supports throwing evaluation:
 
 ```swift
-try Requirement.that(value > 0, "Value is positive")
+try Requirement.that("Value is positive", value > 0)
 try Requirement.that("Remote value is available") { try fetchAvailability() }
 ```
 

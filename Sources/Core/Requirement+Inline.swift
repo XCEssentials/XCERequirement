@@ -35,8 +35,26 @@ extension Requirement where T == Never, E == Never {
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
-        _ input: @autoclosure () -> Value?,
-        _ description: String? = nil
+        _ input: @autoclosure () -> Value?
+    ) throws(RequirementError<Value?, Never>) -> Value {
+        try evaluateNonNil(
+            description: nil,
+            file: file,
+            line: line,
+            function: function,
+            input
+        )
+    }
+
+    /// Lazily evaluates and unwraps an optional value with a description.
+    @discardableResult
+    static
+    func nonNil<Value: Sendable>(
+        file: String = #fileID,
+        line: Int = #line,
+        function: String = #function,
+        _ description: String,
+        _ input: @autoclosure () -> Value?
     ) throws(RequirementError<Value?, Never>) -> Value {
         try evaluateNonNil(
             description: description,
@@ -72,8 +90,8 @@ extension Requirement where T == Never, E == Never {
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
-        _ input: @autoclosure () -> Bool,
-        _ description: String
+        _ description: String,
+        _ input: @autoclosure () -> Bool
     ) throws(RequirementError<Bool, Never>) {
         try evaluateThat(
             description: description,
