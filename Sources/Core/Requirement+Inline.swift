@@ -28,7 +28,19 @@
 
 public
 extension Requirement where T == Never, E == Never {
-    /// Lazily evaluates and unwraps an optional value.
+    /// Requires a lazily evaluated optional value to contain a value and returns it.
+    ///
+    /// The expression is evaluated exactly once. When it produces `nil`, the error
+    /// uses an automatically generated description containing `Value`'s type.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - input: A lazily evaluated optional expression to unwrap.
+    /// - Returns: The value wrapped by `input`.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when `input` evaluates to `nil`.
     @discardableResult
     static
     func nonNil<Value: Sendable>(
@@ -46,7 +58,20 @@ extension Requirement where T == Never, E == Never {
         )
     }
 
-    /// Lazily evaluates and unwraps an optional value with a description.
+    /// Requires a lazily evaluated optional value to contain a value and returns it.
+    ///
+    /// The expression is evaluated exactly once. The supplied description is
+    /// included in any error so callers can identify the failed requirement.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable explanation of why the value is required.
+    ///   - input: A lazily evaluated optional expression to unwrap.
+    /// - Returns: The value wrapped by `input`.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when `input` evaluates to `nil`.
     @discardableResult
     static
     func nonNil<Value: Sendable>(
@@ -65,7 +90,24 @@ extension Requirement where T == Never, E == Never {
         )
     }
 
-    /// Evaluates and unwraps an optional value produced by a throwing closure.
+    /// Requires an optional value produced by a throwing closure and returns it.
+    ///
+    /// The closure is evaluated exactly once. If no description is supplied, an
+    /// explanation containing `Value`'s type is generated automatically.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: An optional human-readable explanation of why the value
+    ///     is required.
+    ///   - input: A closure that produces the optional value to unwrap and may
+    ///     throw if it cannot be produced.
+    /// - Returns: The value wrapped by the optional returned from `input`.
+    /// - Throws: ``RequirementError/evaluationFailed(description:error:context:)``
+    ///   when `input` throws, or
+    ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
+    ///   returns `nil`.
     @discardableResult
     static
     func nonNil<Value: Sendable, EvaluationError: Error>(
@@ -84,7 +126,19 @@ extension Requirement where T == Never, E == Never {
         )
     }
 
-    /// Lazily requires a Boolean expression to be `true`.
+    /// Requires a lazily evaluated Boolean expression to be `true`.
+    ///
+    /// The expression is evaluated exactly once. Successful evaluation has no
+    /// return value; failure retains the `false` input and source context.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable explanation of the required condition.
+    ///   - input: A lazily evaluated Boolean expression that must be `true`.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when `input` evaluates to `false`.
     static
     func that(
         file: String = #fileID,
@@ -103,6 +157,22 @@ extension Requirement where T == Never, E == Never {
     }
 
     /// Requires a Boolean value produced by a throwing closure to be `true`.
+    ///
+    /// The closure is evaluated exactly once. Successful evaluation has no
+    /// return value; failures retain either the thrown error or the `false`
+    /// result together with source context.
+    ///
+    /// - Parameters:
+    ///   - file: The source file recorded in an error. Defaults to the caller.
+    ///   - line: The source line recorded in an error. Defaults to the caller.
+    ///   - function: The function recorded in an error. Defaults to the caller.
+    ///   - description: A human-readable explanation of the required condition.
+    ///   - input: A closure that produces the Boolean value and may throw if it
+    ///     cannot be produced.
+    /// - Throws: ``RequirementError/evaluationFailed(description:error:context:)``
+    ///   when `input` throws, or
+    ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
+    ///   returns `false`.
     static
     func that<EvaluationError: Error>(
         file: String = #fileID,
@@ -123,6 +193,20 @@ extension Requirement where T == Never, E == Never {
 
 private
 extension Requirement where T == Never, E == Never {
+    /// Evaluates the shared implementation of the optional-value requirements.
+    ///
+    /// - Parameters:
+    ///   - description: The explanation stored in an error, or `nil` to generate
+    ///     one from `Value`'s type.
+    ///   - file: The source file stored in an error.
+    ///   - line: The source line stored in an error.
+    ///   - function: The function stored in an error.
+    ///   - input: A closure that produces the optional value and may throw.
+    /// - Returns: The value wrapped by the optional returned from `input`.
+    /// - Throws: ``RequirementError/evaluationFailed(description:error:context:)``
+    ///   when `input` throws, or
+    ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
+    ///   returns `nil`.
     static
     func evaluateNonNil<Value: Sendable, EvaluationError: Error>(
         description: String?,
@@ -156,6 +240,18 @@ extension Requirement where T == Never, E == Never {
         return result
     }
 
+    /// Evaluates the shared implementation of the Boolean requirements.
+    ///
+    /// - Parameters:
+    ///   - description: The explanation stored in an error.
+    ///   - file: The source file stored in an error.
+    ///   - line: The source line stored in an error.
+    ///   - function: The function stored in an error.
+    ///   - input: A closure that produces the Boolean result and may throw.
+    /// - Throws: ``RequirementError/evaluationFailed(description:error:context:)``
+    ///   when `input` throws, or
+    ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
+    ///   returns `false`.
     static
     func evaluateThat<EvaluationError: Error>(
         description: String,

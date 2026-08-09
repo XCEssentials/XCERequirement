@@ -28,10 +28,19 @@
 ///
 /// `T` is the checked input type and `E` is the concrete error type thrown by
 /// the supplied predicate or input closure.
+///
+/// - Parameters:
+///   - T: The `Sendable` input type retained by an unsatisfied error.
+///   - E: The concrete underlying error type retained by an evaluation failure.
 public enum RequirementError<T: Sendable, E: Error>: Error {
     /// The check completed normally, but its input did not satisfy the requirement.
     ///
     /// The associated `input` preserves the rejected value's concrete type.
+    ///
+    /// - Parameters:
+    ///   - description: The human-readable explanation of the requirement.
+    ///   - input: The value that did not satisfy the requirement.
+    ///   - context: The source location at which evaluation was requested.
     case unsatisfied(
         description: String,
         input: T,
@@ -41,6 +50,11 @@ public enum RequirementError<T: Sendable, E: Error>: Error {
     /// The supplied closure threw before the requirement could be evaluated.
     ///
     /// The original error is preserved in the associated `error` value.
+    ///
+    /// - Parameters:
+    ///   - description: The human-readable explanation of the requirement.
+    ///   - error: The original error thrown while producing or checking a value.
+    ///   - context: The source location at which evaluation was requested.
     case evaluationFailed(
         description: String,
         error: E,

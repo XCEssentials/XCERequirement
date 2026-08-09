@@ -29,9 +29,16 @@
 /// A requirement keeps its human-readable ``description`` together with the
 /// code that evaluates it. A throwing predicate is reported as a structured
 /// ``RequirementError`` by ``validate(file:line:function:_:)``.
+///
+/// - Parameters:
+///   - T: The `Sendable` input value type accepted by the predicate.
+///   - E: The concrete error type the predicate may throw.
 public
 struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
-    /// The closure used to evaluate an input value.
+    /// The predicate used to evaluate an input value.
+    ///
+    /// A body receives one value of `T`, returns `true` when that value satisfies
+    /// the requirement, and may throw `E` when evaluation cannot be completed.
     public
     typealias Body = @Sendable (T) throws(E) -> Bool
 
@@ -52,6 +59,10 @@ struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
     ///   - description: A human-readable explanation of the requirement.
     ///   - body: A predicate that returns `true` when its input satisfies the
     ///     requirement. It may throw if evaluation cannot be completed.
+    ///
+    /// The predicate is stored for later calls to
+    /// ``validate(file:line:function:_:)`` or, when nonthrowing,
+    /// ``isSatisfied(by:)``. This initializer does not evaluate it.
     public
     init(
         _ description: String,
@@ -77,6 +88,9 @@ extension Requirement {
     ///   when the predicate returns `false`, or
     ///   ``RequirementError/evaluationFailed(description:error:context:)`` when
     ///   the predicate throws.
+    ///
+    /// The predicate is evaluated exactly once. A successful validation returns
+    /// no value.
     func validate(
         file: String = #fileID,
         line: Int = #line,
