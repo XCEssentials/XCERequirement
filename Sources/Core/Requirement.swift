@@ -30,10 +30,10 @@
 /// code that evaluates it. A throwing predicate is reported as a structured
 /// ``RequirementError`` by ``validate(file:line:function:_:)``.
 public
-struct Requirement<T: Sendable, E: Error>: CustomStringConvertible {
+struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
     /// The closure used to evaluate an input value.
     public
-    typealias Body = (T) throws(E) -> Bool
+    typealias Body = @Sendable (T) throws(E) -> Bool
 
     // ---
 

@@ -151,3 +151,8 @@ try Check.that("Remote value is available") { try fetchAvailability() }
 Closures supplied to `Requirement`, `Check.that`, and `Check.nonEmpty` preserve
 their concrete thrown error type. Any thrown error is wrapped by
 `evaluationFailed` and remains available in its `error` associated value.
+
+`Requirement` is `Sendable`: its input type must conform to `Sendable`, and its
+stored predicate is an `@Sendable` closure. Requirements can therefore be
+transferred between concurrency domains, while the compiler rejects predicates
+that capture unsafe non-`Sendable` state.

@@ -22,28 +22,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P0 — settle before release
 
-### 3. Make the concurrency contract real
-
-`T` is constrained to `Sendable`, but the stored closure is not `@Sendable`, so
-`Requirement` itself cannot safely cross task or actor boundaries. For the major
-release, prototype and source-impact-test:
-
-```swift
-public struct Requirement<T: Sendable, E: Error>: Sendable {
-    public typealias Body = @Sendable (T) throws(E) -> Bool
-    // ...
-}
-```
-
-This is intentionally source-breaking for predicates that capture mutable or
-non-`Sendable` state. Do not use `@unchecked Sendable`. Keep the core
-nonisolated: synchronous general-purpose validation should not inherit
-`@MainActor` or require executor switching.
-
-Also decide whether errors themselves must be `Sendable`. That may require
-`E: Error & Sendable`; do not impose that constraint unless failures genuinely
-need to cross concurrency boundaries.
-
 ### 4. Make source location a first-class value
 
 Every entry point currently repeats `file`, `line`, and `function`, even though
@@ -319,7 +297,7 @@ if `Condition` remains, consider whether it should have distinct semantics.
 | --- | --- | --- |
 | Swift 6 language mode | Keep | Already enabled and enforces the intended language contract. |
 | Typed throws | Keep and refine | Already provides precise predicate and validation failures. |
-| `Sendable` / `@Sendable` | Adopt after source-impact testing | Makes immutable requirements safe to transfer between tasks. |
+| `Sendable` / `@Sendable` | Adopted | Makes immutable requirements safe to transfer between tasks. |
 | `#fileID` source values | Adopt | Improves privacy and shortens repeated APIs. |
 | `callAsFunction` | Adopt | Small, idiomatic convenience with little maintenance cost. |
 | Result builders | Add after batch semantics | Useful declarative syntax once the underlying model is explicit. |
@@ -332,17 +310,16 @@ if `Condition` remains, consider whether it should have distinct semantics.
 
 ## Suggested implementation order
 
-1. Record decisions for input retention, sendable failures, and fail-fast
-   versus accumulated validation.
+1. Record decisions for input retention and fail-fast versus accumulated
+   validation.
 2. Add minimum/current Swift CI lanes and warning-as-error builds.
 3. Introduce the source-location API and diagnostic error conformances.
-4. Apply `@Sendable` and `Sendable` after measuring source compatibility.
-5. Apply major-release renames with deprecated migration shims.
-6. Add `callAsFunction` and named combinators.
-7. Add batch validation, then consider a result builder.
-8. Expand Swift Testing coverage, DocC, external fixtures, platform CI, and API
+4. Apply major-release renames with deprecated migration shims.
+5. Add `callAsFunction` and named combinators.
+6. Add batch validation, then consider a result builder.
+7. Expand Swift Testing coverage, DocC, external fixtures, platform CI, and API
    compatibility checks.
-9. Clean up layout, formatting, aliases, README, site configuration, and release
+8. Clean up layout, formatting, aliases, README, site configuration, and release
    metadata.
-10. Publish a prerelease and compile real or representative clients against it
+9. Publish a prerelease and compile real or representative clients against it
     before tagging the stable major version.

@@ -14,6 +14,16 @@ import XCERequirement
 // ===
 
 class AllTests: XCTestCase {
+    func test_requirement_isSendable() {
+        func requireSendable<T: Sendable>(_: T) {}
+
+        let body: Requirement<Int, Never>.Body = { $0 != 0 }
+        let requirement = Requirement("Non-zero value", body)
+
+        requireSendable(body)
+        requireSendable(requirement)
+    }
+
     func test_requirement_success() {
         do {
             try Requirement("Non-zero value") { $0 != 0 }.validate(14)
@@ -25,7 +35,7 @@ class AllTests: XCTestCase {
     func test_requirement_validate_wrapsConditionEvaluationError() {
         enum TestError: Error { case brokenCondition }
 
-        let body = { (_: Int) throws(TestError) -> Bool in
+        let body = { @Sendable (_: Int) throws(TestError) -> Bool in
             throw TestError.brokenCondition
         }
         let requirement = Requirement("Any value", body)
