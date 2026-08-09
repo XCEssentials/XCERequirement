@@ -15,38 +15,11 @@ before adding DSL syntax. The recommended baseline and sequence are:
 - support the oldest toolchain promised by the package and test it alongside
   the latest stable Swift release;
 - make requirements genuinely safe to transfer between concurrency domains;
-- replace repeated source parameters with a first-class source-location value;
 - add ordinary composition and batch-validation APIs before a result builder;
 - keep macros and property wrappers outside the core unless concrete client
   use cases justify their semantics and maintenance cost.
 
 ## P0 — settle before release
-
-### 4. Make source location a first-class value
-
-Every entry point currently repeats `file`, `line`, and `function`, even though
-`RequirementContext` already groups those values after a failure occurs.
-Replace those parameters with a value that supplies its own call-site defaults:
-
-```swift
-public struct SourceLocation: Sendable, Hashable, Codable {
-    public let fileID: String
-    public let line: UInt
-    public let function: String
-
-    public init(
-        fileID: String = #fileID,
-        line: UInt = #line,
-        function: String = #function
-    ) { /* ... */ }
-}
-```
-
-Then accept `source: SourceLocation = .init()` at public boundaries. Prefer
-`#fileID` to the current `#file` so diagnostics do not expose absolute build
-paths. If full paths are required, make `#filePath` an explicitly named opt-in.
-Either rename `RequirementContext` to `SourceLocation` or evolve the existing
-type; do not keep two overlapping public types.
 
 ### 5. Make errors useful diagnostics
 
@@ -298,7 +271,6 @@ if `Condition` remains, consider whether it should have distinct semantics.
 | Swift 6 language mode | Keep | Already enabled and enforces the intended language contract. |
 | Typed throws | Keep and refine | Already provides precise predicate and validation failures. |
 | `Sendable` / `@Sendable` | Adopted | Makes immutable requirements safe to transfer between tasks. |
-| `#fileID` source values | Adopt | Improves privacy and shortens repeated APIs. |
 | `callAsFunction` | Adopt | Small, idiomatic convenience with little maintenance cost. |
 | Result builders | Add after batch semantics | Useful declarative syntax once the underlying model is explicit. |
 | Macros | Defer to an optional product | Compiler-plugin cost is not justified by the current API. |

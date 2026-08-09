@@ -51,6 +51,7 @@ class AllTests: XCTestCase {
             }
 
             XCTAssertEqual(desc, "Any value")
+            XCTAssertFalse(context.file.hasPrefix("/"))
             XCTAssertTrue(context.function.contains("test_requirement_validate_wrapsConditionEvaluationError"))
             guard case TestError.brokenCondition = nestedError else {
                 return XCTFail("Unexpected nested error")

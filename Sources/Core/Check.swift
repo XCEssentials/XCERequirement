@@ -48,7 +48,7 @@ enum Check {
     public
     static
     func nonEmpty<T: Sendable, E: Error>(
-        file: String = #file,
+        file: String = #fileID,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
@@ -86,7 +86,7 @@ enum Check {
     public
     static
     func nonEmpty<T: Collection & Sendable, E: Error>(
-        file: String = #file,
+        file: String = #fileID,
         line: Int = #line,
         function: String = #function,
         _ description: String? = nil,
@@ -136,7 +136,7 @@ enum Check {
     public
     static
     func that(
-        file: String = #file,
+        file: String = #fileID,
         line: Int = #line,
         function: String = #function,
         _ description: String,
@@ -167,7 +167,7 @@ enum Check {
     public
     static
     func that<E: Error>(
-        file: String = #file,
+        file: String = #fileID,
         line: Int = #line,
         function: String = #function,
         _ description: String,

@@ -110,9 +110,10 @@ catch
 - `unsatisfied(description: String, input: T, context: RequirementContext)` when the predicate returns `false`;
 - `evaluationFailed(description: String, error: E, context: RequirementContext)` when the predicate throws.
 
-The context contains the source file, line, and function and is populated from
-the call site by default. Each validation API also accepts explicit `file`,
-`line`, and `function` arguments for forwarding through wrappers.
+The context contains the module-qualified source file ID, line, and function
+and is populated from `#fileID`, `#line`, and `#function` at the call site by
+default. Each validation API also accepts explicit `file`, `line`, and
+`function` arguments for forwarding through wrappers.
 
 For nonthrowing predicates, use `isSatisfied(by:)` when only a Boolean is
 needed. Throwing predicates deliberately have no Boolean convenience because
