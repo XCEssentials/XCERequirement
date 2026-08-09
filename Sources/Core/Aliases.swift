@@ -31,3 +31,7 @@ typealias Require<T: Sendable, E: Error> = Requirement<T, E>
 /// An alternative spelling of ``Requirement`` for condition-oriented APIs.
 public
 typealias Condition<T: Sendable, E: Error> = Requirement<T, E>
+
+/// An alternative spelling of ``Requirement`` for check-oriented APIs.
+public
+typealias Check<T: Sendable, E: Error> = Requirement<T, E>

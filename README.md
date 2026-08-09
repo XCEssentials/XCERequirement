@@ -74,7 +74,8 @@ The same can be achieved by using the `Require` type alias:
 let r = Require<Int, Never>("Non-zero") { $0 != 0 }
 ```
 
-`Condition<T, E>` is another alias of `Requirement<T, E>` for condition-oriented APIs.
+`Condition<T, E>` and `Check<T, E>` are aliases of `Requirement<T, E>` for
+condition-oriented and check-oriented APIs, respectively.
 
 In the example above, we created an instance of `Requirement` that evaluates values of type `Int`. We pass a string as the first initializer argument and the predicate as a trailing closure. The closure is called with each value that needs to be checked.
 
