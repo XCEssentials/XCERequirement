@@ -22,14 +22,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P0 — settle before release
 
-### 1. Retain Swift 6 language mode
-
-The manifest already requires Swift tools 6.0 and uses
-`swiftLanguageModes: [.v6]`. Keep both settings. Build with warnings treated as
-errors and test debug and release configurations. Do not raise the baseline to
-Swift 6.3 merely to use a new feature unless that feature materially improves
-the public API.
-
 ### 2. Finalize predicate and failure semantics
 
 The current design already uses typed throws:
