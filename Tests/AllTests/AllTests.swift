@@ -113,7 +113,7 @@ class AllTests: XCTestCase {
         let value = 14
 
         do {
-            try Check.that("Non-zero value", value != 0)
+            try Requirement.that(value != 0, description: "Non-zero value")
         } catch {
             XCTFail("Unexpected failure")
         }
@@ -133,7 +133,7 @@ class AllTests: XCTestCase {
         }
 
         do {
-            _ = try Check.that("Non-zero value", condition)
+            _ = try Requirement.that(description: "Non-zero value", condition)
             XCTFail("Expected an error")
         } catch {
             guard
@@ -157,7 +157,7 @@ class AllTests: XCTestCase {
         let value = 0
 
         do {
-            _ = try Check.that("Non-zero value", value != 0 )
+            _ = try Requirement.that(value != 0, description: "Non-zero value")
             XCTFail("Expected an error")
         } catch {
             guard
@@ -172,23 +172,13 @@ class AllTests: XCTestCase {
         }
     }
 
-    func test_nonEmpty_successs() {
+    func test_nonNil_success() {
         let value: Int? = 1
 
         do {
-            try Check.nonEmpty { value }
+            try Requirement.nonNil(value)
 
-            let output: Int = try Check.nonEmpty { value }
-
-            XCTAssertEqual(output, 1)
-        } catch {
-            XCTFail("Unexpected error")
-        }
-
-        do {
-            try Check.nonEmpty("Value is set") { value }
-
-            let output: Int = try Check.nonEmpty("Value is set") { value }
+            let output: Int = try Requirement.nonNil(value)
 
             XCTAssertEqual(output, 1)
         } catch {
@@ -196,9 +186,19 @@ class AllTests: XCTestCase {
         }
 
         do {
-            try Check.nonEmpty("Value is set") { 2 }
+            try Requirement.nonNil(value, description: "Value is set")
 
-            let output: Int = try Check.nonEmpty("Value is set") { 2 }
+            let output: Int = try Requirement.nonNil(value, description: "Value is set")
+
+            XCTAssertEqual(output, 1)
+        } catch {
+            XCTFail("Unexpected error")
+        }
+
+        do {
+            try Requirement.nonNil(2, description: "Value is set")
+
+            let output: Int = try Requirement.nonNil(2, description: "Value is set")
 
             XCTAssertEqual(output, 2)
         } catch {
@@ -206,11 +206,11 @@ class AllTests: XCTestCase {
         }
     }
 
-    func test_nonEmpty_failure() {
+    func test_nonNil_failure() {
         let value: Int? = nil
 
         do {
-            _ = try Check.nonEmpty { value }
+            _ = try Requirement.nonNil(value)
             XCTFail("Expected an error")
         } catch {
             switch error {
@@ -224,7 +224,7 @@ class AllTests: XCTestCase {
         }
 
         do {
-            _ = try Check.nonEmpty("Custom check description") { value }
+            _ = try Requirement.nonNil(value, description: "Custom check description")
             XCTFail("Expected an error")
         } catch {
             switch error {
@@ -238,32 +238,19 @@ class AllTests: XCTestCase {
         }
     }
 
-    func test_nonEmpty_collection() {
+    func test_nonNil_collectionDoesNotRequireNonEmpty() {
         let populated: [Int]? = [1]
         let empty: [Int]? = []
 
-        XCTAssertEqual(try Check.nonEmpty { populated }, [1])
-
-        do {
-            _ = try Check.nonEmpty { empty }
-            XCTFail("Expected an error")
-        } catch {
-            guard
-                case let RequirementError.unsatisfied(desc, input, _) = error
-            else {
-                return XCTFail("Unexpected error type")
-            }
-
-            XCTAssertEqual(desc, "Non-empty instance of type Swift.Array<Swift.Int>")
-            XCTAssertEqual(input, [])
-        }
+        XCTAssertEqual(try Requirement.nonNil(populated), [1])
+        XCTAssertEqual(try Requirement.nonNil(empty), [])
     }
 
-    func test_nonEmpty_errorDuringConditionCheck_whenInputThrows() {
+    func test_nonNil_errorDuringEvaluation_whenInputThrows() {
         enum TestError: Error { case brokenCondition }
 
         do {
-            _ = try Check.nonEmpty("Value is set") { () throws(TestError) -> Int? in
+            _ = try Requirement.nonNil(description: "Value is set") { () throws(TestError) -> Int? in
                 throw TestError.brokenCondition
             }
             XCTFail("Expected an error")
@@ -275,7 +262,7 @@ class AllTests: XCTestCase {
             }
 
             XCTAssertEqual(desc, "Value is set")
-            XCTAssertTrue(context.function.contains("test_nonEmpty_errorDuringConditionCheck_whenInputThrows"))
+            XCTAssertTrue(context.function.contains("test_nonNil_errorDuringEvaluation_whenInputThrows"))
             guard
                 case TestError.brokenCondition = nestedError
             else {
@@ -284,15 +271,15 @@ class AllTests: XCTestCase {
         }
     }
 
-    func test_nonEmpty_unsatisfiedCondition_customContext() {
+    func test_nonNil_unsatisfiedCondition_customContext() {
         let value: Int? = nil
 
         do {
-            _ = try Check.nonEmpty(
+            _ = try Requirement.nonNil(
+                description: "Value is set",
                 file: "CustomFile.swift",
                 line: 77,
-                function: "customFunction()",
-                "Value is set"
+                function: "customFunction()"
             ) { value }
             XCTFail("Expected an error")
         } catch {

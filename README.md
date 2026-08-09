@@ -122,34 +122,33 @@ it would hide evaluation errors; use `validate(_:)` and handle its typed
 
 ## Inline helpers
 
-While `Requirement` itself might be more useful to implement **[data model](https://en.wikipedia.org/wiki/Data_model)**, the `Check` namespace provides APIs that are convenient for inline use when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. They throw a typed `RequirementError<T, E>` when a check is not fulfilled or cannot be evaluated.
+`Requirement` also provides static APIs that are convenient for one-off inline checks when implementing **[business logic](https://en.wikipedia.org/wiki/Business_logic)**. They throw a typed `RequirementError<T, E>` when a requirement is not fulfilled or cannot be evaluated.
 
-`Check.nonEmpty` evaluates an optional-producing closure and returns its
-unwrapped value. It throws when the result is `nil`; if the value is a
-collection, the more specific overload also throws when it is empty. The
+`Requirement.nonNil` lazily evaluates an optional expression and returns its
+unwrapped value. An empty collection is valid as long as it is non-`nil`. The
 description is optional and defaults to a message based on the value's type:
 
 ```swift
-let nonNilValue = try Check.nonEmpty("Value is not nil") { optionalValue }
-let nonEmptyValues = try Check.nonEmpty { optionalArray }
+let nonNilValue = try Requirement.nonNil(optionalValue, description: "Value is not nil")
+let values = try Requirement.nonNil(optionalArray)
 ```
 
 The return value is marked `@discardableResult`, so the same API can be used
 only for validation:
 
 ```swift
-try Check.nonEmpty("Value is not nil") { optionalValue }
+try Requirement.nonNil(optionalValue, description: "Value is not nil")
 ```
 
-`Check.that` accepts either a `Bool` value or a Boolean-producing closure and
-throws unless the result is `true`:
+`Requirement.that` accepts a lazy Boolean expression, while its closure
+overload supports throwing evaluation:
 
 ```swift
-try Check.that("Value is positive", value > 0)
-try Check.that("Remote value is available") { try fetchAvailability() }
+try Requirement.that(value > 0, description: "Value is positive")
+try Requirement.that(description: "Remote value is available") { try fetchAvailability() }
 ```
 
-Closures supplied to `Requirement`, `Check.that`, and `Check.nonEmpty` preserve
+Closures supplied to `Requirement.that` and `Requirement.nonNil` preserve
 their concrete thrown error type. Any thrown error is wrapped by
 `evaluationFailed` and remains available in its `error` associated value.
 

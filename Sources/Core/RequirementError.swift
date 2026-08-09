@@ -24,7 +24,7 @@
  
  */
 
-/// An error produced while evaluating a ``Requirement`` or a ``Check`` API.
+/// An error produced while evaluating a ``Requirement`` API.
 ///
 /// `T` is the checked input type and `E` is the concrete error type thrown by
 /// the supplied predicate or input closure.

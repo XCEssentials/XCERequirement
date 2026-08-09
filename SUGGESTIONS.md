@@ -41,29 +41,6 @@ semantics are designed.
 
 ## P1 — API clarity and developer experience
 
-### 6. Adopt names that read naturally
-
-A possible surface is:
-
-```swift
-requirement.isSatisfied(by: value)
-try requirement.validate(value)
-try Check.require(value > 0, "Value must be positive")
-let value = try Check.unwrap(optional, "Value must exist")
-```
-
-- Consider renaming `Check.that` to `require`.
-- Separate `nonNil`/`unwrap` from a true collection `nonEmpty` operation. The
-  current overload family uses “non-empty” for both non-`nil` optionals and
-  non-empty collections.
-- Consider `@autoclosure` for simple Boolean and optional expressions so they
-  remain lazy without braces; retain explicit closure overloads for throwing
-  evaluation.
-- Put values, descriptions, and trailing closures in an order that behaves well
-  in autocomplete and reads consistently across all overloads.
-
-Use deprecated forwarding overloads and provide a migration table.
-
 ### 7. Add `callAsFunction`
 
 This is a small convenience that fits the abstraction:
@@ -198,7 +175,7 @@ core abstraction.
 - Test exact source propagation for every public entry point, nested errors,
   default descriptions, composition truth tables, short-circuiting, batch
   ordering, and sendability compile checks.
-- Rename `test_nonEmpty_successs` and group tests by public type.
+- Group tests by public type.
 - Add a small external fixture client; in-package tests do not expose every
   public-access and type-inference issue.
 - Run `swift test --parallel`, a release build, and warning-as-error builds.
