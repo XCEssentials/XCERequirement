@@ -22,36 +22,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P0 — settle before release
 
-### 2. Finalize predicate and failure semantics
-
-The current design already uses typed throws:
-
-```swift
-public typealias Body = (T) throws(E) -> Bool
-
-public func validate(_ value: T) throws(RequirementError<T, E>)
-```
-
-`validate` distinguishes an unsatisfied predicate from a predicate that could
-not be evaluated by wrapping both in `RequirementError`. By contrast,
-`isValid` converts either failure into `false`. Decide whether that information
-loss should remain part of the public contract.
-
-Recommended options, in preference order:
-
-1. Rename the Boolean operation to `isSatisfied(by:)` and restrict it to
-   `E == Never`, so it cannot hide evaluation failures.
-2. Keep throwing predicates and offer an explicit `evaluate(_:)` returning a
-   typed result for callers that prefer value-based handling.
-3. If `isValid` remains available for throwing predicates, document prominently
-   that both failure modes become `false` and deprecate it in favor of a name
-   that signals lossy evaluation.
-
-Avoid splitting the library into separate throwing and nonthrowing requirement
-types unless prototypes show clearly better type inference and call sites. The
-existing `Requirement<T, E>` and `RequirementError<T, E>` already preserve the
-concrete evaluation error.
-
 ### 3. Make the concurrency contract real
 
 `T` is constrained to `Sendable`, but the stored closure is not `@Sendable`, so
@@ -131,7 +101,6 @@ try Check.require(value > 0, "Value must be positive")
 let value = try Check.unwrap(optional, "Value must exist")
 ```
 
-- Rename `isValid` to `isSatisfied(by:)`.
 - Consider renaming `Check.that` to `require`.
 - Separate `nonNil`/`unwrap` from a true collection `nonEmpty` operation. The
   current overload family uses “non-empty” for both non-`nil` optionals and
@@ -333,8 +302,6 @@ deployment minimums that are not required by the standard-library-only code.
 - Keep the Swift badge and installation version aligned with the manifest.
 - Ensure every example compiles in CI.
 - Clarify that Swift throws errors, not exceptions.
-- Document the distinction between an unsatisfied condition and evaluation
-  failure wherever `isValid` or its replacement is introduced.
 - Retain the valid `jekyll-theme-cayman` configuration only if the Jekyll site
   remains in use; otherwise replace it with DocC-based publishing.
 
@@ -365,8 +332,8 @@ if `Condition` remains, consider whether it should have distinct semantics.
 
 ## Suggested implementation order
 
-1. Record decisions for lossy Boolean evaluation, input retention, sendable
-   failures, and fail-fast versus accumulated validation.
+1. Record decisions for input retention, sendable failures, and fail-fast
+   versus accumulated validation.
 2. Add minimum/current Swift CI lanes and warning-as-error builds.
 3. Introduce the source-location API and diagnostic error conformances.
 4. Apply `@Sendable` and `Sendable` after measuring source compatibility.

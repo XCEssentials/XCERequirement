@@ -66,37 +66,6 @@ struct Requirement<T: Sendable, E: Error>: CustomStringConvertible {
 
 public
 extension Requirement {
-    /// Returns whether a value satisfies this requirement.
-    ///
-    /// This returns `false` both when the predicate returns `false` and when it
-    /// throws. Any thrown error is discarded. Use
-    /// ``validate(file:line:function:_:)`` when that distinction is needed.
-    ///
-    /// - Parameters:
-    ///   - file: The source file recorded on failure. Defaults to the caller.
-    ///   - line: The source line recorded on failure. Defaults to the caller.
-    ///   - function: The function recorded on failure. Defaults to the caller.
-    ///   - value: The value to evaluate.
-    /// - Returns: `true` only when the predicate completes and returns `true`.
-    func isValid(
-        file: String = #file,
-        line: Int = #line,
-        function: String = #function,
-        _ value: T
-    ) -> Bool {
-        do {
-            try validate(
-                file: file,
-                line: line,
-                function: function,
-                value
-            )
-            return true
-        } catch {
-            return false
-        }
-    }
-
     /// Validates a value or throws a structured ``RequirementError``.
     ///
     /// - Parameters:
@@ -139,5 +108,16 @@ extension Requirement {
                 context: RequirementContext(file: file, line: line, function: function)
             )
         }
+    }
+}
+
+public
+extension Requirement where E == Never {
+    /// Returns whether a value satisfies this nonthrowing requirement.
+    ///
+    /// - Parameter value: The value to evaluate.
+    /// - Returns: The Boolean result of the predicate.
+    func isSatisfied(by value: T) -> Bool {
+        body(value)
     }
 }

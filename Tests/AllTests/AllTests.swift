@@ -91,22 +91,11 @@ class AllTests: XCTestCase {
         }
     }
 
-    func test_requirement_isValid() {
+    func test_requirement_isSatisfied() {
         let requirement = Requirement<Int, Never>("Non-zero value") { $0 != 0 }
 
-        XCTAssertTrue(requirement.isValid(1))
-        XCTAssertFalse(requirement.isValid(0))
-    }
-
-    func test_requirement_isValid_returnsFalseOnThrownConditionError() {
-        enum TestError: Error { case brokenCondition }
-
-        let body = { (_: Int) throws(TestError) -> Bool in
-            throw TestError.brokenCondition
-        }
-        let requirement = Requirement("Any value", body)
-
-        XCTAssertFalse(requirement.isValid(1))
+        XCTAssertTrue(requirement.isSatisfied(by: 1))
+        XCTAssertFalse(requirement.isSatisfied(by: 0))
     }
 
     func test_inlineCheck_success() {
@@ -314,7 +303,7 @@ class AllTests: XCTestCase {
         let require: Require<Int, Never> = Require("Non-zero value") { $0 != 0 }
         let condition: Condition<Int, Never> = Condition("Positive value") { $0 > 0 }
 
-        XCTAssertTrue(require.isValid(1))
-        XCTAssertFalse(condition.isValid(0))
+        XCTAssertTrue(require.isSatisfied(by: 1))
+        XCTAssertFalse(condition.isSatisfied(by: 0))
     }
 }

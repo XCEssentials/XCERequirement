@@ -83,11 +83,11 @@ Note that if a requirement contains phrases like **AND**, **OR**, or any other l
 When requirement is created, here is an example of how it might be used for checking potentially suitable values.
 
 ```swift
-if r.isValid(14) { // returns Bool
+if r.isSatisfied(by: 14) {
     // 14 fulfills the requirement.
     print("\(r.description) -> YES")
 } else {
-    // This branch runs if the predicate returns false or throws.
+    // The predicate returned false.
     print("\(r.description) -> NO")
 }
 ```
@@ -112,9 +112,12 @@ catch
 
 The context contains the source file, line, and function and is populated from
 the call site by default. Each validation API also accepts explicit `file`,
-`line`, and `function` arguments for forwarding through wrappers. Use `isValid`
-only when the distinction between an unsatisfied requirement and an evaluation
-failure is unimportant, because it returns `false` for both.
+`line`, and `function` arguments for forwarding through wrappers.
+
+For nonthrowing predicates, use `isSatisfied(by:)` when only a Boolean is
+needed. Throwing predicates deliberately have no Boolean convenience because
+it would hide evaluation errors; use `validate(_:)` and handle its typed
+`RequirementError<T, E>` instead.
 
 ## Inline helpers
 
