@@ -35,8 +35,7 @@ import Foundation
 ///   - T: The `Sendable` input type retained by an unsatisfied error.
 ///   - E: The concrete underlying error type retained by an evaluation failure.
 public enum RequirementError<T: Sendable, E: Error>: Error, CustomStringConvertible,
-    LocalizedError
-{
+    LocalizedError {
     /// The check completed normally, but its input did not satisfy the requirement.
     ///
     /// The associated `input` preserves the rejected value's concrete type.

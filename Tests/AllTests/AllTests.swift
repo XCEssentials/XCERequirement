@@ -160,7 +160,9 @@ class AllTests: XCTestCase {
         XCTAssertTrue(requirement.isSatisfied(by: 1))
         XCTAssertFalse(requirement.isSatisfied(by: 0))
     }
+}
 
+extension AllTests {
     func test_inlineCheck_success() {
         let value = 14
 
@@ -193,7 +195,6 @@ class AllTests: XCTestCase {
             else {
                 return XCTFail("Unexpected validation error")
             }
-
             XCTAssertEqual(desc, "Non-zero value")
             XCTAssertTrue(context.function.contains("test_inlineCheck_errorDuringConditionCheck"))
 
