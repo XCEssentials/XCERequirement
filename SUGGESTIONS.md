@@ -21,65 +21,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P0 — settle before release
 
-## P1 — API clarity and developer experience
-
-### 10. Add focused factories for common predicates
-
-Key-path and `Comparable` helpers could reduce repetition while remaining
-strongly typed, for example:
-
-```swift
-Requirement.equals(\.status, .active, description: "Account is active")
-Requirement.nonNil(\.owner, description: "Owner exists")
-Requirement.contains(\.roles, .admin, description: "User is an admin")
-```
-
-Add only factories supported by repeated real client code. Avoid recreating a
-large validation framework or duplicating standard-library algorithms.
-
-## Features to defer or avoid
-
-### 11. Keep macros optional and outside the core
-
-The plausible macro is an expression macro such as:
-
-```swift
-#require(user.age >= 18)
-```
-
-It could capture expression spelling and source location automatically, but
-source spelling is usually inferior to the human-facing description central to
-this library. A macro also introduces compiler-plugin implementation and test
-targets and increases build and maintenance cost.
-
-Do not add a macro to the core product now. If real demand emerges, expose a
-separate optional `XCERequirementMacros` product while keeping every operation
-available through the normal API.
-
-### 12. Do not use property wrappers in the core
-
-An API such as `@Validated(by: .positive) var count` leaves essential behavior
-unclear because property setters cannot naturally throw. Rejecting, trapping,
-ignoring, or storing an invalid assignment would all be surprising in different
-contexts, and initialization and mutation need different handling.
-
-Only consider a wrapper in a separate integration layer after defining explicit
-storage and failure semantics. Explicit validation is a better match for the
-core abstraction.
-
-### 13. Skip unrelated new language features
-
-- Parameter packs have no current heterogeneous variadic use case.
-- Noncopyable types, `Span`, `InlineArray`, and ownership modifiers solve no
-  demonstrated problem in this closure-based library.
-- Swift 6.3 `@c` and module selectors are irrelevant without a C boundary or
-  module-name collision.
-- Do not apply `@specialize`, `@inline(always)`, or implementation-visibility
-  attributes without benchmark evidence; predicate execution will usually
-  dominate validation overhead.
-- Do not adopt default main-actor isolation or `@concurrent` in the synchronous
-  core.
-
 ## P1 — tests, CI, and package policy
 
 ### 14. Expand the test strategy
