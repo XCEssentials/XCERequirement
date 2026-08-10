@@ -14,6 +14,10 @@ import XCERequirement
 // ===
 
 class AllTests: XCTestCase {
+    private struct ComparableError: Error, Codable, Equatable, Hashable, Sendable {
+        let message: String
+    }
+
     func test_requirement_isSendable() {
         func requireSendable<T: Sendable>(_: T) {}
 
@@ -100,6 +104,36 @@ class AllTests: XCTestCase {
             XCTAssertEqual(context.line, 42)
             XCTAssertEqual(context.function, "customFunction()")
         }
+    }
+
+    func test_requirementError_diagnosticsAndConditionalConformances() throws {
+        func requireSendable<T: Sendable>(_: T) {}
+
+        let context = RequirementContext(file: "File.swift", line: 12, function: "test()")
+        let unsatisfied = RequirementError<Int, ComparableError>.unsatisfied(
+            description: "Value is positive",
+            input: -1,
+            context: context
+        )
+        let evaluationFailed = RequirementError<Int, ComparableError>.evaluationFailed(
+            description: "Value is available",
+            error: ComparableError(message: "Unavailable"),
+            context: context
+        )
+
+        XCTAssertEqual(
+            unsatisfied.description,
+            "Unsatisfied requirement: Value is positive. Rejected input: -1"
+        )
+        XCTAssertEqual(unsatisfied.errorDescription, unsatisfied.description)
+        XCTAssertEqual(
+            evaluationFailed.description,
+            "Requirement evaluation failed: Value is available. Error: ComparableError(message: \"Unavailable\")"
+        )
+        XCTAssertEqual(unsatisfied, unsatisfied)
+        XCTAssertEqual(Set([unsatisfied, unsatisfied]).count, 1)
+        XCTAssertNoThrow(try JSONEncoder().encode(unsatisfied))
+        requireSendable(unsatisfied)
     }
 
     func test_requirement_isSatisfied() {

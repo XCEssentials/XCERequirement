@@ -111,6 +111,15 @@ catch
 - `unsatisfied(description: String, input: T, context: RequirementContext)` when the predicate returns `false`;
 - `evaluationFailed(description: String, error: E, context: RequirementContext)` when the predicate throws.
 
+The error conforms to `CustomStringConvertible` and `LocalizedError`, using the
+requirement's human-readable description in both representations. It
+conditionally conforms to `Equatable`, `Hashable`, `Codable`, and `Sendable`
+when its generic values provide the corresponding conformances.
+
+An `unsatisfied` error intentionally retains the complete rejected input. Use
+this API only with values that are appropriate to retain and expose through an
+error.
+
 The context contains the module-qualified source file ID, line, and function
 and is populated from `#fileID`, `#line`, and `#function` at the call site by
 default. Each validation API also accepts explicit `file`, `line`, and

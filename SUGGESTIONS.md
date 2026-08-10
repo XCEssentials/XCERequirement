@@ -21,24 +21,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P0 — settle before release
 
-### 5. Make errors useful diagnostics
-
-The current generic enum preserves both the rejected input and concrete nested
-error, which is a strong basis. Improve it by:
-
-- adding `CustomStringConvertible` and `LocalizedError` where the resulting
-  messages are stable and useful;
-- defining whether nested failures are exposed as `underlyingError`;
-- adding `Equatable`, `Hashable`, `Codable`, and `Sendable` only conditionally
-  where their generic payloads support those conformances;
-- deciding whether retaining the complete rejected input creates privacy,
-  memory, or logging risks, and documenting redaction expectations;
-- keeping the case vocabulary consistently `unsatisfied` and
-  `evaluationFailed`.
-
-Do not promise localization-ready GUI errors until localization and redaction
-semantics are designed.
-
 ## P1 — API clarity and developer experience
 
 ### 7. Add `callAsFunction`
