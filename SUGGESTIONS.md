@@ -23,27 +23,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P1 — API clarity and developer experience
 
-### 8. Add principled composition
-
-Splitting requirements and composing them are complementary. Start with named
-combinators rather than operators:
-
-```swift
-let eligible = isAdult.and(hasConsent)
-let recognized = isEmail.or(isPhoneNumber)
-let permitted = isBlocked.negated()
-```
-
-Specify and test:
-
-- short-circuiting;
-- which evaluation error wins;
-- composite description formatting;
-- source-location propagation;
-- whether composed requirements require identical `T` and `E` types.
-
-Only consider `&&`, `||`, and prefix `!` after the named API proves clear.
-
 ### 9. Add batch validation before result-builder syntax
 
 Create an ordinary `Requirements<T, E>` collection or equivalent API first:
