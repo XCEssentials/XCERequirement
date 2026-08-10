@@ -23,36 +23,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P1 — API clarity and developer experience
 
-### 9. Add batch validation before result-builder syntax
-
-Create an ordinary `Requirements<T, E>` collection or equivalent API first:
-
-```swift
-let failures = requirements.failures(for: user)
-try requirements.validateAll(user)
-```
-
-Settle fail-fast versus accumulated validation, ordering, evaluation-error
-handling, and failure representation. Consider providing explicitly named
-operations for both fail-fast and accumulation instead of one configurable
-method.
-
-After those semantics are stable, a result builder (sometimes called a content
-builder) can be a useful thin syntax layer:
-
-```swift
-let accountRules = Requirements<Account, Never> {
-    Requirement("Email is present") { !$0.email.isEmpty }
-
-    if requiresConsent {
-        Requirement("Consent is granted") { $0.hasConsent }
-    }
-}
-```
-
-The builder should only construct the collection; it should not define hidden
-validation behavior.
-
 ### 10. Add focused factories for common predicates
 
 Key-path and `Comparable` helpers could reduce repetition while remaining
