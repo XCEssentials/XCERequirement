@@ -1,15 +1,4 @@
-
 ## P2 — repository cleanup
-
-### 18. Modernize layout and formatting
-
-- Move sources to `Sources/XCERequirement/` and tests to
-  `Tests/XCERequirementTests/`, then remove custom manifest paths.
-- Split `AllTests.swift` into files grouped by subject.
-- Adopt consistent standard Swift formatting; the current split modifiers and
-  vertical whitespace make the small implementation harder to scan.
-- Consider concise SPDX headers while retaining the root `LICENSE`.
-- Review `.gitignore` for obsolete generated-project and legacy Xcode entries.
 
 ### 19. Keep documentation aligned with behavior
 

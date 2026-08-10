@@ -1,28 +1,5 @@
-/*
- 
- MIT License
- 
- Copyright (c) 2016 Maxim Khatskevich (maxim@khatskevi.ch)
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- 
- */
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2016 Maxim Khatskevich
 
 /// A named, reusable predicate that validates `Sendable` values of `T`.
 ///
@@ -33,23 +10,17 @@
 /// - Parameters:
 ///   - T: The `Sendable` input value type accepted by the predicate.
 ///   - E: The concrete error type the predicate may throw.
-public
-struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
+public struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
     /// The predicate used to evaluate an input value.
     ///
     /// A body receives one value of `T`, returns `true` when that value satisfies
     /// the requirement, and may throw `E` when evaluation cannot be completed.
-    public
-    typealias Body = @Sendable (T) throws(E) -> Bool
-
-    // ---
+    public typealias Body = @Sendable (T) throws(E) -> Bool
 
     /// A human-readable explanation of the condition an input must satisfy.
-    public
-    let description: String
+    public let description: String
 
-    private
-    let body: Body
+    private let body: Body
 
     // MARK: - Initializers
 
@@ -63,8 +34,7 @@ struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
     /// The predicate is stored for later calls to
     /// ``validate(file:line:function:_:)`` or, when nonthrowing,
     /// ``isSatisfied(by:)``. This initializer does not evaluate it.
-    public
-    init(
+    public init(
         _ description: String,
         _ body: @escaping Body
     ) {
@@ -75,8 +45,7 @@ struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
 
 // MARK: - Validation
 
-public
-extension Requirement {
+public extension Requirement {
     /// Validates a value using function-call syntax.
     ///
     /// - Parameter value: The value to evaluate.
@@ -114,8 +83,6 @@ extension Requirement {
     ) throws(RequirementError<T, E>) {
         let result: Bool
 
-        // ---
-
         do {
             result = try body(value)
         } catch {
@@ -126,11 +93,7 @@ extension Requirement {
             )
         }
 
-        // ---
-
-        guard
-            result
-        else {
+        guard result else {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: value,
@@ -140,8 +103,7 @@ extension Requirement {
     }
 }
 
-public
-extension Requirement where E == Never {
+public extension Requirement where E == Never {
     /// Returns whether a value satisfies this nonthrowing requirement.
     ///
     /// - Parameter value: The value to evaluate.

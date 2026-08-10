@@ -1,4 +1,5 @@
 // swift-tools-version: 6.0
+// SPDX-License-Identifier: MIT
 
 import PackageDescription
 
@@ -29,7 +30,6 @@ let package = Package(
     targets: [
         .target(
             name: "XCERequirement",
-            path: "Sources/Core",
             plugins: [
                 .plugin(
                     name: "SwiftLintBuildToolPlugin",
@@ -38,11 +38,10 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "XCERequirementAllTests",
+            name: "XCERequirementTests",
             dependencies: [
                 "XCERequirement"
             ],
-            path: "Tests/AllTests",
             plugins: [
                 .plugin(
                     name: "SwiftLintBuildToolPlugin",

@@ -1,33 +1,9 @@
-/*
- 
- MIT License
- 
- Copyright (c) 2016 Maxim Khatskevich (maxim@khatskevi.ch)
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- 
- */
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2016 Maxim Khatskevich
 
 // MARK: - One-off validation
 
-public
-extension Requirement where T == Never, E == Never {
+public extension Requirement where T == Never, E == Never {
     /// Requires a lazily evaluated optional value to contain a value and returns it.
     ///
     /// The expression is evaluated exactly once. When it produces `nil`, the error
@@ -42,8 +18,7 @@ extension Requirement where T == Never, E == Never {
     /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
     ///   when `input` evaluates to `nil`.
     @discardableResult
-    static
-    func nonNil<Value: Sendable>(
+    static func nonNil<Value: Sendable>(
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -73,8 +48,7 @@ extension Requirement where T == Never, E == Never {
     /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
     ///   when `input` evaluates to `nil`.
     @discardableResult
-    static
-    func nonNil<Value: Sendable>(
+    static func nonNil<Value: Sendable>(
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -109,8 +83,7 @@ extension Requirement where T == Never, E == Never {
     ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
     ///   returns `nil`.
     @discardableResult
-    static
-    func nonNil<Value: Sendable, EvaluationError: Error>(
+    static func nonNil<Value: Sendable, EvaluationError: Error>(
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -139,8 +112,7 @@ extension Requirement where T == Never, E == Never {
     ///   - input: A lazily evaluated Boolean expression that must be `true`.
     /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
     ///   when `input` evaluates to `false`.
-    static
-    func that(
+    static func that(
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -173,8 +145,7 @@ extension Requirement where T == Never, E == Never {
     ///   when `input` throws, or
     ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
     ///   returns `false`.
-    static
-    func that<EvaluationError: Error>(
+    static func that<EvaluationError: Error>(
         file: String = #fileID,
         line: Int = #line,
         function: String = #function,
@@ -191,8 +162,7 @@ extension Requirement where T == Never, E == Never {
     }
 }
 
-private
-extension Requirement where T == Never, E == Never {
+private extension Requirement where T == Never, E == Never {
     /// Evaluates the shared implementation of the optional-value requirements.
     ///
     /// - Parameters:
@@ -207,8 +177,7 @@ extension Requirement where T == Never, E == Never {
     ///   when `input` throws, or
     ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
     ///   returns `nil`.
-    static
-    func evaluateNonNil<Value: Sendable, EvaluationError: Error>(
+    static func evaluateNonNil<Value: Sendable, EvaluationError: Error>(
         description: String?,
         file: String,
         line: Int,
@@ -252,8 +221,7 @@ extension Requirement where T == Never, E == Never {
     ///   when `input` throws, or
     ///   ``RequirementError/unsatisfied(description:input:context:)`` when it
     ///   returns `false`.
-    static
-    func evaluateThat<EvaluationError: Error>(
+    static func evaluateThat<EvaluationError: Error>(
         description: String,
         file: String,
         line: Int,
