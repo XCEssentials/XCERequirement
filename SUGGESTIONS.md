@@ -23,23 +23,6 @@ before adding DSL syntax. The recommended baseline and sequence are:
 
 ## P1 — API clarity and developer experience
 
-### 7. Add `callAsFunction`
-
-This is a small convenience that fits the abstraction:
-
-```swift
-public func callAsFunction(
-    _ value: T
-) throws(RequirementError<T, E>) {
-    try validate(value)
-}
-
-try isAdult(user)
-```
-
-Choose one callable meaning, preferably throwing validation. Do not create
-Boolean and throwing forms that differ only by contextual return type.
-
 ### 8. Add principled composition
 
 Splitting requirements and composing them are complementary. Start with named

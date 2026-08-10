@@ -77,6 +77,21 @@ struct Requirement<T: Sendable, E: Error>: CustomStringConvertible, Sendable {
 
 public
 extension Requirement {
+    /// Validates a value using function-call syntax.
+    ///
+    /// - Parameter value: The value to evaluate.
+    /// - Throws: ``RequirementError/unsatisfied(description:input:context:)``
+    ///   when the predicate returns `false`, or
+    ///   ``RequirementError/evaluationFailed(description:error:context:)`` when
+    ///   the predicate throws.
+    ///
+    /// Calling a requirement is equivalent to calling ``validate(file:line:function:_:)``.
+    func callAsFunction(
+        _ value: T
+    ) throws(RequirementError<T, E>) {
+        try validate(value)
+    }
+
     /// Validates a value or throws a structured ``RequirementError``.
     ///
     /// - Parameters:

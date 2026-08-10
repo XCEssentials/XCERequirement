@@ -36,6 +36,24 @@ class AllTests: XCTestCase {
         }
     }
 
+    func test_requirement_callAsFunction_validatesValue() {
+        let requirement = Requirement<Int, Never>("Non-zero value") { $0 != 0 }
+
+        XCTAssertNoThrow(try requirement(14))
+
+        do {
+            try requirement(0)
+            XCTFail("Expected an error")
+        } catch {
+            guard case let RequirementError.unsatisfied(description, input, _) = error else {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(description, "Non-zero value")
+            XCTAssertEqual(input, 0)
+        }
+    }
+
     func test_requirement_validate_wrapsConditionEvaluationError() {
         enum TestError: Error { case brokenCondition }
 
