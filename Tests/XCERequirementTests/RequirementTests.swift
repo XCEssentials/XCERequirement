@@ -20,6 +20,12 @@ final class RequirementTests: XCTestCase {
         requireSendable(requirement)
     }
 
+    func test_requirementContext_unknown_hasNoSourceLocation() {
+        XCTAssertEqual(RequirementContext.unknown.file, "")
+        XCTAssertEqual(RequirementContext.unknown.line, 0)
+        XCTAssertEqual(RequirementContext.unknown.function, "")
+    }
+
     func test_requirement_success() {
         do {
             try Requirement("Non-zero value") { $0 != 0 }.validate(14)
@@ -37,12 +43,40 @@ final class RequirementTests: XCTestCase {
             try requirement(0)
             XCTFail("Expected an error")
         } catch {
-            guard case let RequirementError.unsatisfied(description, input, _) = error else {
+            guard
+                case let RequirementError.unsatisfied(description, input, context) = error
+            else {
                 return XCTFail("Unexpected validation error")
             }
 
             XCTAssertEqual(description, "Non-zero value")
             XCTAssertEqual(input, 0)
+            XCTAssertEqual(context, .unknown)
+        }
+    }
+
+    func test_requirement_callAsFunction_evaluationFailure_hasUnknownContext() {
+        enum TestError: Error { case brokenCondition }
+
+        let body = { @Sendable (_: Int) throws(TestError) -> Bool in
+            throw TestError.brokenCondition
+        }
+        let requirement = Requirement("Any value", body)
+
+        do {
+            try requirement(14)
+            XCTFail("Expected an error")
+        } catch {
+            guard
+                case let RequirementError.evaluationFailed(_, nestedError, context) = error
+            else {
+                return XCTFail("Unexpected validation error")
+            }
+
+            XCTAssertEqual(context, .unknown)
+            guard case TestError.brokenCondition = nestedError else {
+                return XCTFail("Unexpected nested error")
+            }
         }
     }
 
@@ -75,8 +109,12 @@ final class RequirementTests: XCTestCase {
 
     func test_requirement_unsatisfiedCondition() {
         let value = 0
+        let expectedFile = #fileID
+        let expectedFunction = #function
+        var expectedLine = 0
 
         do {
+            expectedLine = #line + 1
             _ = try Requirement("Non-zero value") { $0 != value }.validate(value)
             XCTFail("Expected an error")
         } catch {
@@ -88,18 +126,25 @@ final class RequirementTests: XCTestCase {
 
             XCTAssertEqual(desc, "Non-zero value")
             XCTAssertEqual(input, value)
-            XCTAssertTrue(context.function.contains("test_requirement_unsatisfiedCondition"))
+            XCTAssertEqual(context.file, expectedFile)
+            XCTAssertEqual(context.line, expectedLine)
+            XCTAssertEqual(context.function, expectedFunction)
         }
     }
 
     func test_requirement_unsatisfiedCondition_customContext() {
         let requirement = Requirement<Int, Never>("Non-zero value") { $0 != 0 }
+        let expectedContext = RequirementContext(
+            file: "CustomFile.swift",
+            line: 42,
+            function: "customFunction()"
+        )
 
         do {
             _ = try requirement.validate(
-                file: "CustomFile.swift",
-                line: 42,
-                function: "customFunction()",
+                file: expectedContext.file,
+                line: expectedContext.line,
+                function: expectedContext.function,
                 0
             )
             XCTFail("Expected an error")
@@ -110,9 +155,7 @@ final class RequirementTests: XCTestCase {
                 return XCTFail("Unexpected validation error")
             }
 
-            XCTAssertEqual(context.file, "CustomFile.swift")
-            XCTAssertEqual(context.line, 42)
-            XCTAssertEqual(context.function, "customFunction()")
+            XCTAssertEqual(context, expectedContext)
         }
     }
 

@@ -7,6 +7,13 @@
 /// by default. Pass explicit values when validation is forwarded through a
 /// wrapper and the wrapper's caller should be reported instead.
 public struct RequirementContext: Codable, Equatable, Hashable, Sendable {
+    /// A source location that is unavailable or irrelevant.
+    public static let unknown = Self(
+        file: "",
+        line: 0,
+        function: ""
+    )
+
     /// The module-qualified source file in which validation was requested.
     public let file: String
     /// The source line on which validation was requested.

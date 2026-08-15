@@ -54,11 +54,13 @@ public extension Requirement {
     ///   ``RequirementError/evaluationFailed(description:error:context:)`` when
     ///   the predicate throws.
     ///
-    /// Calling a requirement is equivalent to calling ``validate(file:line:function:_:)``.
+    /// Errors use ``RequirementContext/unknown`` because function-call syntax
+    /// does not provide a meaningful diagnostic call site in this API. Call
+    /// ``validate(file:line:function:_:)`` when source context should be captured.
     func callAsFunction(
         _ value: T
     ) throws(RequirementError<T, E>) {
-        try validate(value)
+        try validate(context: .unknown, value)
     }
 
     /// Validates a value or throws a structured ``RequirementError``.
@@ -81,6 +83,18 @@ public extension Requirement {
         function: String = #function,
         _ value: T
     ) throws(RequirementError<T, E>) {
+        try validate(
+            context: RequirementContext(file: file, line: line, function: function),
+            value
+        )
+    }
+}
+
+private extension Requirement {
+    func validate(
+        context: RequirementContext,
+        _ value: T
+    ) throws(RequirementError<T, E>) {
         let result: Bool
 
         do {
@@ -89,7 +103,7 @@ public extension Requirement {
             throw RequirementError.evaluationFailed(
                 description: description,
                 error: error,
-                context: RequirementContext(file: file, line: line, function: function)
+                context: context
             )
         }
 
@@ -97,7 +111,7 @@ public extension Requirement {
             throw RequirementError.unsatisfied(
                 description: description,
                 input: value,
-                context: RequirementContext(file: file, line: line, function: function)
+                context: context
             )
         }
     }
